@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/colorOpacity0"
+    android:layout_marginLeft="4dp"
+    android:layout_marginTop="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/album_image"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_weight="1"
+        android:src="@drawable/test"
+        android:background="@color/colorOpacity30"/>
+
+    <LinearLayout
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/album_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:maxWidth="90dp"
+            android:text="아티스트"
+            android:textColor="@color/colorOpacity70"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/album_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="2019"
+            android:maxWidth="40dp"
+            android:textSize="13sp"
+            android:textColor="@color/colorOpacity70"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/album_title"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="앨범 타이틀"
+        android:textColor="@color/colorWhite"
+        android:maxLines="1"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        />
+
+
+</LinearLayout>
