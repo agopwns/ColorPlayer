@@ -14,7 +14,7 @@
         android:layout_marginLeft="10dp">
 
         <ImageView
-            android:id="@+id/movie_image"
+            android:id="@+id/album_art"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"

@@ -1,37 +1,38 @@
 package com.example.colorplayer.adapter;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.ContentUris;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.colorplayer.R;
-import com.example.colorplayer.callback.ArtistEventListener;
-import com.example.colorplayer.callback.SongEventListener;
 import com.example.colorplayer.model.Artist;
-import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.PreferencesUtility;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHolder> {
 
-    private Context context;
-    private ArrayList<Artist> artist;
-    private ArtistEventListener listener;
+    private List<Artist> arraylist;
+    private Activity mContext;
+    private boolean isGrid;
 
-    // 생성자에서 데이터 ArrayList 와 Context 전달 받음
-    public ArtistAdapter(Context context, ArrayList<Artist> artist) {
-        this.context = context;
-        this.artist = artist;
+    public ArtistAdapter(Activity context, List<Artist> arraylist) {
+        this.arraylist = arraylist;
+        this.mContext = context;
+        this.isGrid = PreferencesUtility.getInstance(mContext).isArtistsInGrid();
     }
 
     @Override
     public ArtistHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_artist_list, parent, false);
-
         return new ArtistHolder(v);
     }
 
@@ -40,42 +41,39 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
         final Artist artist = getSong(position);
         if(artist!=null){
             holder.artistName.setText(artist.getName());
-            holder.artistSongs.setText("" + artist.getSongCount());
+            holder.artistSongs.setText(artist.getSongCount() + "곡");
 
-            // 노트 클릭 이벤트 초기화
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onMovieClick(artist);
-                }
-            });
+            // 앨범 이미지 로드
+            Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), artist.id);
+            Glide
+                    .with(holder.itemView.getContext())
+                    .load(uri)
+                    .error(R.drawable.test)
+                    .into(holder.albumArt);
 
         }
     }
 
     @Override
     public int getItemCount() {
-        return artist.size();
+        return arraylist.size();
     }
 
     private Artist getSong(int position){
-        return artist.get(position);
+        return arraylist.get(position);
     }
 
     class ArtistHolder extends RecyclerView.ViewHolder {
 
         TextView artistName, artistSongs;
-//        ImageView movieImageView;
+        ImageView albumArt;
 
         public ArtistHolder(View itemView) {
             super(itemView);
             artistName = itemView.findViewById(R.id.artist_name);
             artistSongs = itemView.findViewById(R.id.artist_songs);
-//            movieImageView = itemView.findViewById(R.id.movie_image);
+            albumArt = itemView.findViewById(R.id.album_art);
         }
     }
 
-    public void setListener(ArtistEventListener listener){
-        this.listener = listener;
-    }
 }
