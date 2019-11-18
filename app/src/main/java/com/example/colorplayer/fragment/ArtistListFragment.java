@@ -35,17 +35,6 @@ public class ArtistListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_artist_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_artist_list);
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-        list.add(new Artist(1,"가수 이름", 100, 100));
-
         recyclerView.setHasFixedSize(true);
         adapter = new ArtistAdapter(getActivity(), list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

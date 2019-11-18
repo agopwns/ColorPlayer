@@ -42,25 +42,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
             holder.artistName.setText(artist.getName());
             holder.artistSongs.setText("" + artist.getSongCount());
 
-            // 이미지뷰 모서리 둥글게
-//            GradientDrawable drawable =
-//                    (GradientDrawable) context.getDrawable(R.drawable.background_rounding);
-//            holder.movieImageView.setBackground(drawable);
-//            holder.movieImageView.setClipToOutline(true);
-
-//            if(movie.getMovieImagePath() != null){
-//                Uri tempUri = Uri.parse(movie.getMovieImagePath());
-//                Glide
-//                        .with(holder.itemView.getContext())
-//                        .load(tempUri)
-//                        .into(holder.movieImageView);
-//            } else {
-//                Glide
-//                        .with(holder.itemView.getContext())
-//                        .load(R.drawable.baseline_add_photo_alternate_black_48dp)
-//                        .into(holder.movieImageView);
-//            }
-
             // 노트 클릭 이벤트 초기화
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
