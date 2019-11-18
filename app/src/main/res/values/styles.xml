@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorOpacity0</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@drawable/background4</item>
+        <item name="android:windowBackground">@drawable/background5</item>
 <!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
 <!--        <item name="android:statusBarColor">@color/colorOpacity0</item>-->
 <!--        <item name="android:windowTranslucentStatus">true</item>-->

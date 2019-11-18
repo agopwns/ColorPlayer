@@ -1,98 +1,87 @@
 package com.example.colorplayer.adapter;
 
+import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.colorplayer.R;
 import com.example.colorplayer.callback.SongEventListener;
+import com.example.colorplayer.model.Album;
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.PreferencesUtility;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> {
 
-    private Context context;
-    private ArrayList<Song> songs;
-    private SongEventListener listener;
+    private List<Album> arraylist;
+    private Activity mContext;
 
-    // 생성자에서 데이터 ArrayList 와 Context 전달 받음
-    public AlbumAdapter(Context context, ArrayList<Song> songs) {
-        this.context = context;
-        this.songs = songs;
+    public AlbumAdapter(Activity context, List<Album> arraylist) {
+        this.arraylist = arraylist;
+        this.mContext = context;
     }
 
     @Override
     public AlbumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_album_list, parent, false);
-
         return new AlbumHolder(v);
     }
 
     @Override
     public void onBindViewHolder(AlbumHolder holder, int position) {
-        final Song song = getSong(position);
-        if(song!=null){
-            holder.albumTitle.setText(song.title);
-            holder.albumArtist.setText(song.artistName);
+        final Album album = getAlbum(position);
+        if(album!=null){
+            holder.albumTitle.setText(album.title);
+            holder.albumArtist.setText(album.artistName);
+            String tempYear = Integer.toString(album.year);
+            if(tempYear.length() > 4)
+                tempYear = tempYear.substring(0, 4);
 
-            // 이미지뷰 모서리 둥글게
-//            GradientDrawable drawable =
-//                    (GradientDrawable) context.getDrawable(R.drawable.background_rounding);
-//            holder.movieImageView.setBackground(drawable);
-//            holder.movieImageView.setClipToOutline(true);
+            if(!tempYear.equals("0"))
+                holder.albumYear.setText(tempYear);
 
-//            if(movie.getMovieImagePath() != null){
-//                Uri tempUri = Uri.parse(movie.getMovieImagePath());
-//                Glide
-//                        .with(holder.itemView.getContext())
-//                        .load(tempUri)
-//                        .into(holder.movieImageView);
-//            } else {
-//                Glide
-//                        .with(holder.itemView.getContext())
-//                        .load(R.drawable.baseline_add_photo_alternate_black_48dp)
-//                        .into(holder.movieImageView);
-//            }
-
-            // 노트 클릭 이벤트 초기화
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onMovieClick(song);
-                }
-            });
-
+            // 앨범 이미지 로드
+            Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), album.id);
+            Glide
+                    .with(holder.itemView.getContext())
+                    .load(uri)
+                    .error(R.drawable.test)
+                    .into(holder.albumArt);
         }
     }
 
     @Override
     public int getItemCount() {
-        return songs.size();
+        return arraylist.size();
     }
 
-    private Song getSong(int position){
-        return songs.get(position);
+    private Album getAlbum(int position){
+        return arraylist.get(position);
     }
 
     class AlbumHolder extends RecyclerView.ViewHolder {
 
-        TextView albumTitle, albumArtist;
-//        ImageView movieImageView;
+        TextView albumTitle, albumArtist, albumYear;
+        ImageView albumArt;
 
         public AlbumHolder(View itemView) {
             super(itemView);
             albumTitle = itemView.findViewById(R.id.album_title);
             albumArtist = itemView.findViewById(R.id.album_artist);
-//            movieImageView = itemView.findViewById(R.id.movie_image);
+            albumYear = itemView.findViewById(R.id.album_year);
+            albumArt = itemView.findViewById(R.id.album_art);
         }
     }
 
-    public void setListener(SongEventListener listener){
-        this.listener = listener;
-    }
 }

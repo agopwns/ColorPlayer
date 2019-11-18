@@ -9,7 +9,7 @@
     >
 
     <ImageView
-        android:id="@+id/album_image"
+        android:id="@+id/album_art"
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_weight="1"
@@ -28,15 +28,17 @@
             android:ellipsize="end"
             android:maxWidth="90dp"
             android:text="아티스트"
+            android:maxLines="1"
             android:textColor="@color/colorOpacity70"
             android:textSize="13sp" />
 
         <TextView
-            android:id="@+id/album_date"
+            android:id="@+id/album_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="2019"
+            android:maxLines="1"
             android:maxWidth="40dp"
             android:textSize="13sp"
             android:textColor="@color/colorOpacity70"/>
@@ -49,6 +51,7 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="앨범 타이틀"
+        android:ellipsize="end"
         android:textColor="@color/colorWhite"
         android:maxLines="1"
         android:textSize="15sp"
