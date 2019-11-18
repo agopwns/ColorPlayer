@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:maxHeight="5dp"
+            android:maxHeight="10dp"
             android:progress="30"
             android:progressTint="@color/colorMildYellow"
             android:tag="tint_accent_color" />
@@ -82,11 +82,12 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/baseline_play_circle_outline_white_24dp"
+        android:src="@drawable/baseline_play_circle_outline_white_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.48"
+        android:scaleType="centerInside"
         android:background="@color/colorOpacity0"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

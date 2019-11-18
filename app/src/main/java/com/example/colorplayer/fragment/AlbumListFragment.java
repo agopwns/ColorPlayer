@@ -35,19 +35,7 @@ public class AlbumListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_album_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_album_list);
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
-        list.add(new Song("노래 제목", "가수 이름", "앨범명"));
+
 
         recyclerView.setHasFixedSize(true);
         adapter = new AlbumAdapter(getActivity(), list);

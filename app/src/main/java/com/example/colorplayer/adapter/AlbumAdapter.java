@@ -37,8 +37,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     public void onBindViewHolder(AlbumHolder holder, int position) {
         final Song song = getSong(position);
         if(song!=null){
-            holder.albumTitle.setText(song.getTitle());
-            holder.albumArtist.setText(song.getArtist());
+            holder.albumTitle.setText(song.title);
+            holder.albumArtist.setText(song.artistName);
 
             // 이미지뷰 모서리 둥글게
 //            GradientDrawable drawable =

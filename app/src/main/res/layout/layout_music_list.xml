@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/colorOpacity0"
     >
 
     <LinearLayout
@@ -14,7 +13,7 @@
         android:layout_marginLeft="10dp">
 
         <ImageView
-            android:id="@+id/movie_image"
+            android:id="@+id/album_art"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
@@ -40,6 +39,7 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:maxLines="1"
+                android:ellipsize="end"
                 />
 
             <TextView
@@ -52,6 +52,7 @@
                 android:textColor="@color/colorOpacity70"
                 android:text="music artist"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:textSize="14sp"/>
 
         </LinearLayout>
