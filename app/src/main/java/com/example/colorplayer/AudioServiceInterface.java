@@ -90,4 +90,24 @@ public class AudioServiceInterface {
         return null;
     }
 
+    public long getPosition() {
+        if (mService != null) {
+            return mService.getPosition();
+        }
+        return 0;
+    }
+
+    public long getDuration() {
+        if (mService != null) {
+            return mService.getDuration();
+        }
+        return 0;
+    }
+
+    public void setSeekTo(int progress){
+        if (mService != null) {
+            mService.setSeekTo(progress);
+        }
+    }
+
 }

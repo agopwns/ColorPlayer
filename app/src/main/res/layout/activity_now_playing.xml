@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -48,15 +48,16 @@
         android:layout_height="380dp"
         android:layout_marginTop="40dp"
         android:background="@color/colorOpacity20"
-        android:elevation="3dp"
         android:src="@drawable/test1024"
+        android:scaleType="fitCenter"
+        android:elevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="60dp"
         android:layout_marginTop="40dp"
         android:orientation="vertical"
@@ -66,33 +67,33 @@
 
         <TextView
             android:id="@+id/music_title"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="30dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Believer"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
-            android:textSize="24dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/artist_name"
-            android:layout_width="300dp"
+            android:layout_width="350dp"
             android:layout_height="30dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Imagine Dragons"
             android:textAlignment="center"
             android:textColor="@color/colorOpacity70"
-            android:textSize="20dp" />
+            android:textSize="16dp" />
 
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+        android:layout_width="380dp"
         android:layout_height="30dp"
         android:layout_marginTop="30dp"
         android:orientation="horizontal"
@@ -102,30 +103,34 @@
 
         <TextView
             android:id="@+id/song_start_time"
-            android:layout_width="50dp"
+            android:layout_width="30dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="0:00"
             android:textAlignment="center"
             android:textColor="@color/colorOpacity70" />
 
-        <ProgressBar
+        <SeekBar
             android:id="@+id/song_progress_normal"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="5"
+            android:layout_weight="8"
             android:maxHeight="5dp"
             android:progress="40"
             android:progressTint="@color/colorWhite"
+            android:thumb="@color/colorOpacity0"
+            android:thumbTint="@color/colorWhite"
             android:tag="tint_accent_color" />
 
         <TextView
             android:id="@+id/song_end_time"
-            android:layout_width="50dp"
+            android:layout_width="30dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="4:30"
             android:textAlignment="center"
             android:textColor="@color/colorOpacity70" />
@@ -147,7 +152,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:background="@color/colorOpacity0"
             android:src="@drawable/baseline_repeat_white_18dp" />
 
@@ -157,7 +162,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:background="@color/colorOpacity0"
             android:src="@drawable/baseline_keyboard_arrow_left_white_24dp" />
 
@@ -178,7 +183,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:background="@color/colorOpacity0"
             android:src="@drawable/baseline_keyboard_arrow_right_white_24dp" />
 
@@ -188,7 +193,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:background="@color/colorOpacity0"
             android:src="@drawable/baseline_shuffle_white_18dp" />
 
