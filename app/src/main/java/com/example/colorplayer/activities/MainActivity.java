@@ -1,4 +1,4 @@
-package com.example.colorplayer;
+package com.example.colorplayer.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.colorplayer.R;
+import com.example.colorplayer.adapter.SectionPageAdapter;
 import com.example.colorplayer.animation.ZoomOutPageTransformer;
 import com.example.colorplayer.fragment.SongListFragment;
 import com.example.colorplayer.fragment.AlbumListFragment;

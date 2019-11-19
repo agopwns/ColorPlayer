@@ -4,5 +4,5 @@ import com.example.colorplayer.model.Song;
 
 public interface SongEventListener {
 
-    void onMovieClick(Song song);
+    void onSongClick(Song song);
 }

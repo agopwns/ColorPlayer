@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NowPlayingActivity">
+    tools:context=".activities.NowPlayingActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -40,31 +40,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!--    android:background="@drawable/myrect"-->
+
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_margin="20dp"
+        android:id="@+id/album_art"
+        android:layout_width="380dp"
+        android:layout_height="380dp"
+        android:layout_marginTop="40dp"
         android:background="@color/colorOpacity20"
-        android:src="@drawable/test1024"
         android:elevation="3dp"
+        android:src="@drawable/test1024"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
-<!--    android:background="@drawable/myrect"-->
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="300dp"
         android:layout_height="60dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="40dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/album_art">
 
         <TextView
+            android:id="@+id/music_title"
             android:layout_width="300dp"
             android:layout_height="30dp"
             android:ellipsize="end"
@@ -72,10 +73,11 @@
             android:text="Believer"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
-            android:textSize="21dp"
+            android:textSize="24dp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/artist_name"
             android:layout_width="300dp"
             android:layout_height="30dp"
             android:ellipsize="end"
@@ -83,7 +85,7 @@
             android:text="Imagine Dragons"
             android:textAlignment="center"
             android:textColor="@color/colorOpacity70"
-            android:textSize="18dp" />
+            android:textSize="20dp" />
 
 
     </LinearLayout>
@@ -92,7 +94,7 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -133,7 +135,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -161,13 +163,14 @@
 
         <ImageButton
             android:id="@+id/button_play"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@color/colorOpacity0"
-            android:src="@drawable/baseline_play_arrow_white_36dp" />
+            android:src="@drawable/baseline_pause_white_36"
+            android:scaleType="centerInside"/>
 
         <ImageButton
             android:id="@+id/button_next"

@@ -2,8 +2,10 @@ package com.example.colorplayer.adapter;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
+import com.example.colorplayer.activities.NowPlayingActivity;
 import com.example.colorplayer.callback.SongEventListener;
 import com.example.colorplayer.model.Song;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
@@ -32,6 +39,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     private int lastPosition = -1;
     private String ateKey;
     private long playlistId;
+    private SongEventListener listener;
+
 
     // 생성자에서 데이터 ArrayList 와 Context 전달 받음
     public SongAdapter(AppCompatActivity context, List<Song> arraylist, boolean isPlaylistSong, boolean animate) {
@@ -62,29 +71,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
                 .load(uri)
                 .error(R.drawable.test)
                 .into(holder.albumArt);
-
-//            ImageLoader.getInstance().displayImage(TimberUtils.getAlbumArtUri(song.albumId).toString(),
-//                    holder.albumArt, new DisplayImageOptions.Builder().cacheInMemory(true)
-//                            .showImageOnLoading(R.drawable.ic_empty_music2)
-//                            .resetViewBeforeLoading(true).build());
-
-//            if (MusicPlayer.getCurrentAudioId() == song.id) {
-//                holder.musicTitle.setTextColor(Config.accentColor(mContext, ateKey));
-//                if (MusicPlayer.isPlaying()) {
-//                    holder.visualizer.setColor(Config.accentColor(mContext, ateKey));
-//                    holder.visualizer.setVisibility(View.VISIBLE);
-//                } else {
-//                    holder.visualizer.setVisibility(View.GONE);
-//                }
-//            } else {
-//                holder.visualizer.setVisibility(View.GONE);
-//                if (isPlaylist) {
-//                    holder.musicTitle.setTextColor(Color.WHITE);
-//                } else {
-//                    holder.musicTitle.setTextColor(Config.textColorPrimary(mContext, ateKey));
-//                }
-//            }
-
         }
     }
 
@@ -97,7 +83,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         return arraylist.get(position);
     }
 
-    class SongHolder extends RecyclerView.ViewHolder {
+    public class SongHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView musicTitle, musicArtist;
         ImageView albumArt;
@@ -107,6 +93,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             musicTitle = itemView.findViewById(R.id.music_title);
             musicArtist = itemView.findViewById(R.id.music_artist);
             albumArt = itemView.findViewById(R.id.album_art);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent moveIntent = new Intent(mContext.getApplicationContext(), NowPlayingActivity.class);
+            // TODO : 서비스
+            // TODO : 음악 리스트
+
+            AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList()); // 재생 목록 세팅
+            AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition()); // 선택한 오디오 재생
+            mContext.startActivity(moveIntent);
         }
     }
 
@@ -115,7 +113,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         for (int i = 0; i < getItemCount(); i++) {
             ret[i] = arraylist.get(i).id;
         }
+        return ret;
+    }
 
+    public ArrayList<Long> getSongIdsList() {
+        ArrayList<Long> ret = new ArrayList<Long>();
+        for (int i = 0; i < getItemCount(); i++) {
+            ret.add(arraylist.get(i).id);
+        }
         return ret;
     }
 
@@ -124,6 +129,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 //        this.arraylist = arraylist;
 //        this.songIDs = getSongIds();
 //    }
+
 
 
 }
