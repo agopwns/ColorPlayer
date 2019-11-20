@@ -38,6 +38,21 @@ public class AudioServiceInterface {
         }
     }
 
+    public ArrayList<Long> getPlayList() {
+        ArrayList<Long> returnList = new ArrayList<>();
+        if (mService != null)
+            return mService.getPlayList();
+        else
+            return returnList;
+    }
+
+    public int getSongPosition(){
+        if(mService != null)
+            return mService.getSongPosition();
+        else
+            return 0;
+    }
+
     public void play(int position) {
         if (mService != null) {
             mService.play(position);

@@ -40,13 +40,12 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="674dp"
+        android:layout_height="675dp"
         android:layout_marginTop="1dp"
         android:background="@color/colorOpacity0" />
 
     <include
         android:id="@+id/bottom_now_playing_bar"
-        layout="@layout/bottom_nowplaying_card">
-    </include>
+        layout="@layout/bottom_nowplaying_card"/>
 
 </LinearLayout>

@@ -7,7 +7,8 @@
     android:layout_width="wrap_content"
     android:layout_height="45dp"
     android:layout_gravity="top"
-    android:background="@color/colorOpacity0">
+    android:background="@color/colorOpacity0"
+    android:elevation="3dp">
 
     <View
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
         app:layout_constraintBottom_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/movie_image"
+        android:id="@+id/album_art"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
@@ -31,13 +32,13 @@
         android:layout_width="310dp"
         android:layout_height="45dp"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/movie_image"
+        android:layout_toRightOf="@id/album_art"
         android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@+id/movie_image"
+        app:layout_constraintStart_toEndOf="@+id/album_art"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/music_title"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,7 +52,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/artist"
+            android:id="@+id/artist_name"
             style="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,25 +65,26 @@
             android:textColor="@color/colorOpacity70"
             android:textSize="13sp" />
 
-        <ProgressBar
-            android:id="@+id/song_progress_normal"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:maxHeight="10dp"
-            android:progress="30"
-            android:progressTint="@color/colorMildYellow"
-            android:tag="tint_accent_color" />
+<!--        <ProgressBar-->
+<!--            android:id="@+id/song_progress_normal"-->
+<!--            style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="top"-->
+<!--            android:minHeight="10dip"-->
+<!--            android:maxHeight="20dip"-->
+<!--            android:progress="30"-->
+<!--            android:progressTint="@color/colorMildYellow"-->
+<!--            android:tag="tint_accent_color" />-->
 
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/button_play"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/baseline_play_circle_outline_white_24"
+        android:src="@drawable/baseline_play_arrow_white_36"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

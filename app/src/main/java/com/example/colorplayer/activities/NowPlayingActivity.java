@@ -64,15 +64,6 @@ public class NowPlayingActivity extends AppCompatActivity {
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
 
                 AudioApplication.getInstance().getServiceInterface().togglePlay();
-
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        AudioApplication.getInstance().getServiceInterface().togglePlay();
-//                    }
-//                }, 10);
-
             }
         });
 
@@ -176,7 +167,6 @@ public class NowPlayingActivity extends AppCompatActivity {
             // 타이틀, 아티스트
             title.setText(song.title);
             artist.setText(song.artistName);
-
         }
     }
 

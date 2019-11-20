@@ -57,7 +57,6 @@ public class AudioService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 isPrepared = false;
-
                 // Warning : ViewPager 에서 미디어 플레이어 사용시 오류가 난다는 상황을 많이 발견
                 // 에러시 다음 곡을 넘어가는 것을 방지하기 위해 다시 재생
                 mCurrentPosition--;
@@ -97,6 +96,14 @@ public class AudioService extends Service {
                 mAudioIds.addAll(audioIds);
             }
         }
+    }
+
+    public ArrayList<Long> getPlayList(){
+        return mAudioIds;
+    }
+
+    public int getSongPosition(){
+        return mCurrentPosition;
     }
 
     // 현재 재생할 오디오 정보 가져오기

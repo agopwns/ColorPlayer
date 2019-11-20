@@ -99,11 +99,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         @Override
         public void onClick(View v) {
             Intent moveIntent = new Intent(mContext.getApplicationContext(), NowPlayingActivity.class);
-            // TODO : 서비스
-            // TODO : 음악 리스트
 
-            AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList()); // 재생 목록 세팅
-            AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition()); // 선택한 오디오 재생
+            // 재생 목록 세팅
+            AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList());
+
+            // 이미 재생 되고 있는 곡이 있다면 선택한 오디오와 비교해서 같을 경우 플레이 x
+            if(AudioApplication.getInstance().getServiceInterface().getSongPosition() != getAdapterPosition())
+                AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition()); // 선택한 오디오 재생
             mContext.startActivity(moveIntent);
         }
     }
