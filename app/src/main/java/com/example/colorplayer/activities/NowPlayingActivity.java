@@ -51,7 +51,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 
         registerBroadcast();
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
-        updateUI();
+        updateUINextSong();
 
         // 재생 and 일시정지
         playButton = findViewById(R.id.button_play);
@@ -72,24 +72,8 @@ public class NowPlayingActivity extends AppCompatActivity {
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AudioApplication.getInstance().getServiceInterface().rewind();
-                updateUI();
-
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        AudioApplication.getInstance().getServiceInterface().rewind();
-//                        updateUI();
-//                        if (seekBar != null){
-//                            overflowcounter = 0;
-//                            seekBar.postDelayed(mUpdateProgress, 10);
-//                        }
-//                    }
-//                }, 200);
-
-
+                //updateUI();
             }
         });
 
@@ -99,20 +83,7 @@ public class NowPlayingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AudioApplication.getInstance().getServiceInterface().forward();
-                updateUI();
-
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        AudioApplication.getInstance().getServiceInterface().forward();
-//                        updateUI();
-//                        if (seekBar != null){
-//                            overflowcounter = 0;
-//                            seekBar.postDelayed(mUpdateProgress, 10);
-//                        }
-//                    }
-//                }, 200);
+                //updateUI();
             }
         });
 
@@ -155,18 +126,50 @@ public class NowPlayingActivity extends AppCompatActivity {
     private void updateUI() {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            if(playButton != null){
+                if (AudioApplication.getInstance().getServiceInterface().isPlaying()) {
+                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
+                } else {
+                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+                }
+            }
+//            if(albumArt != null){
+//                // 앨범 이미지 로드
+//                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
+//                Glide
+//                        .with(this)
+//                        .load(uri)
+//                        .error(R.drawable.test)
+//                        .into(albumArt);
+//            }
+//            // 타이틀, 아티스트
+//            if(title != null && artist != null){
+//                title.setText(song.title);
+//                artist.setText(song.artistName);
+//            }
+        }
+    }
 
-            // 앨범 이미지 로드
-            Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
-            Glide
-                    .with(this)
-                    .load(uri)
-                    .error(R.drawable.test)
-                    .into(albumArt);
-
+    private void updateUINextSong() {
+        if(AudioApplication.getInstance() != null){
+            song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            if(playButton != null){
+                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
+            }
+            if(albumArt != null){
+                // 앨범 이미지 로드
+                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
+                Glide
+                        .with(this)
+                        .load(uri)
+                        .error(R.drawable.test)
+                        .into(albumArt);
+            }
             // 타이틀, 아티스트
-            title.setText(song.title);
-            artist.setText(song.artistName);
+            if(title != null && artist != null){
+                title.setText(song.title);
+                artist.setText(song.artistName);
+            }
         }
     }
 
@@ -204,14 +207,25 @@ public class NowPlayingActivity extends AppCompatActivity {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI();
+
+            if (intent.getAction().equals(BroadcastActions.PLAY_STATE_CHANGED)) {
+                updateUI();
+            } else if(intent.getAction().equals(BroadcastActions.PLAY_NEXT_SONG)) {
+                updateUINextSong();
+            }
+
         }
     };
 
     public void registerBroadcast(){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BroadcastActions.PLAY_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver, filter);
+        IntentFilter filterPlayState = new IntentFilter();
+        filterPlayState.addAction(BroadcastActions.PLAY_STATE_CHANGED);
+
+        IntentFilter filterNext = new IntentFilter();
+        filterNext.addAction(BroadcastActions.PLAY_NEXT_SONG);
+
+        registerReceiver(mBroadcastReceiver, filterPlayState);
+        registerReceiver(mBroadcastReceiver, filterNext);
     }
 
     public void unregisterBroadcast(){

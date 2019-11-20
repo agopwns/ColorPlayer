@@ -3,6 +3,8 @@ package com.example.colorplayer.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -36,6 +38,7 @@ import com.example.colorplayer.fragment.AlbumListFragment;
 import com.example.colorplayer.fragment.ArtistListFragment;
 import com.example.colorplayer.model.Song;
 import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView albumArt;
     TextView title, artist;
     LinearLayout nowPlayingCard;
-    ImageButton playButton;
+    ImageButton playButton, searchButton, optionButton;
     Song song;
     SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
 
@@ -62,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
         title = findViewById(R.id.music_title);
         artist = findViewById(R.id.artist_name);
         nowPlayingCard = findViewById(R.id.content);
+
+        searchButton = findViewById(R.id.icon_search);
+        optionButton = findViewById(R.id.icon_option);
 
         albumArt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +194,14 @@ public class MainActivity extends AppCompatActivity {
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
             if(song == null) return;
 
+            if(playButton != null){
+                if (AudioApplication.getInstance().getServiceInterface().isPlaying()) {
+                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
+                } else {
+                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+                }
+            }
+
             // 앨범 이미지 로드
             Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
             Glide
@@ -199,10 +213,29 @@ public class MainActivity extends AppCompatActivity {
             // 타이틀, 아티스트
             title.setText(song.title);
             artist.setText(song.artistName);
+        }
+    }
 
-            // 재생 중일 경우 nowPlayingCard 일시 정지 버튼 변경
-            if(AudioApplication.getInstance().getServiceInterface().isPlaying())
+    private void updateUINextSong() {
+        if(AudioApplication.getInstance() != null){
+            song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            if(playButton != null){
                 playButton.setImageResource(R.drawable.baseline_pause_white_36);
+            }
+            if(albumArt != null){
+                // 앨범 이미지 로드
+                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
+                Glide
+                        .with(this)
+                        .load(uri)
+                        .error(R.drawable.test)
+                        .into(albumArt);
+            }
+            // 타이틀, 아티스트
+            if(title != null && artist != null){
+                title.setText(song.title);
+                artist.setText(song.artistName);
+            }
         }
     }
 
@@ -210,17 +243,31 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI();
+
+            if (intent.getAction().equals(BroadcastActions.PLAY_STATE_CHANGED)) {
+                updateUI();
+            } else if(intent.getAction().equals(BroadcastActions.PLAY_NEXT_SONG)) {
+                updateUINextSong();
+            }
+
         }
     };
 
     public void registerBroadcast(){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BroadcastActions.PLAY_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver, filter);
+        IntentFilter filterPlayState = new IntentFilter();
+        filterPlayState.addAction(BroadcastActions.PLAY_STATE_CHANGED);
+
+        IntentFilter filterNext = new IntentFilter();
+        filterNext.addAction(BroadcastActions.PLAY_NEXT_SONG);
+
+        registerReceiver(mBroadcastReceiver, filterPlayState);
+        registerReceiver(mBroadcastReceiver, filterNext);
     }
 
     public void unregisterBroadcast(){
         unregisterReceiver(mBroadcastReceiver);
     }
+
+    // 알림바
+
 }
