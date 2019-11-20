@@ -52,6 +52,8 @@ public class NowPlayingActivity extends AppCompatActivity {
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
         updateUINextSong();
 
+        title.setSelected(true);
+
         // 재생 and 일시정지
         playButton = findViewById(R.id.button_play);
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +149,7 @@ public class NowPlayingActivity extends AppCompatActivity {
                 Glide
                         .with(this)
                         .load(uri)
-                        .error(R.drawable.test)
+                        .error(R.drawable.ic_whatshot_24px_white)
                         .into(albumArt);
             }
             // 타이틀, 아티스트
