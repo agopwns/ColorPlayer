@@ -1,26 +1,18 @@
 package com.example.colorplayer;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.NotificationTarget;
 import com.example.colorplayer.activities.MainActivity;
-import com.example.colorplayer.activities.NowPlayingActivity;
 import com.example.colorplayer.utils.CommandActions;
-import com.squareup.picasso.Picasso;
 
 public class NotificationPlayer {
 

@@ -15,7 +15,6 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.example.colorplayer.adapter.SongAdapter;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.CommandActions;

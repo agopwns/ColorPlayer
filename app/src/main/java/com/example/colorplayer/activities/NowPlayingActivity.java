@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -133,20 +132,6 @@ public class NowPlayingActivity extends AppCompatActivity {
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
                 }
             }
-//            if(albumArt != null){
-//                // 앨범 이미지 로드
-//                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
-//                Glide
-//                        .with(this)
-//                        .load(uri)
-//                        .error(R.drawable.test)
-//                        .into(albumArt);
-//            }
-//            // 타이틀, 아티스트
-//            if(title != null && artist != null){
-//                title.setText(song.title);
-//                artist.setText(song.artistName);
-//            }
         }
     }
 

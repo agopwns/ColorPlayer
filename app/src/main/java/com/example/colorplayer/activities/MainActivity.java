@@ -3,8 +3,6 @@ package com.example.colorplayer.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -38,7 +36,6 @@ import com.example.colorplayer.fragment.AlbumListFragment;
 import com.example.colorplayer.fragment.ArtistListFragment;
 import com.example.colorplayer.model.Song;
 import com.google.android.material.tabs.TabLayout;
-import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
