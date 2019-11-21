@@ -104,7 +104,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList());
 
             // 이미 재생 되고 있는 곡이 있다면 선택한 오디오와 비교해서 같을 경우 플레이 x
-            if(AudioApplication.getInstance().getServiceInterface().getSongPosition() != getAdapterPosition())
+            //if(AudioApplication.getInstance().getServiceInterface().getSongPosition() != getAdapterPosition())
                 AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition()); // 선택한 오디오 재생
             mContext.startActivity(moveIntent);
         }

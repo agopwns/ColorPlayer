@@ -17,22 +17,23 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
+import com.example.colorplayer.AudioServiceInterface;
 import com.example.colorplayer.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 
 public class NowPlayingActivity extends AppCompatActivity {
 
     ImageButton backButton, optionButton,
-            repeatButton, prevButton, playButton, nextButton, randomButton;
+            repeatButton, prevButton, playButton, nextButton, shuffleButton;
     ImageView albumArt;
     TextView title, artist, duration, totalTime;
     Song song;
     SeekBar seekBar;
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,39 @@ public class NowPlayingActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
+
+        // 셔플 버튼 클릭시 셔플된 곡 리스트를 서비스에 넘겨줘야 함
+        shuffleButton = findViewById(R.id.button_shuffle);
+        shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
+                    shuffleButton.setImageResource(R.drawable.shuffle_unuse);
+                else
+                    shuffleButton.setImageResource(R.drawable.baseline_shuffle_white_24);
+
+                // 셔플 상태 변경
+                AudioApplication.getInstance().getServiceInterface().toggleShuffleList();
+            }
+        });
+
+        // 반복 버튼
+        repeatButton = findViewById(R.id.button_repeat);
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ALL))
+                    repeatButton.setImageResource(R.drawable.baseline_repeat_one_white_24);
+                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ONE))
+                    repeatButton.setImageResource(R.drawable.shuffle_disabled);
+                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_NONE))
+                    repeatButton.setImageResource(R.drawable.baseline_repeat_white_24);
+
+                // 반복 상태 변경
+                AudioApplication.getInstance().getServiceInterface().toggleShuffleList();
+            }
+        });
     }
 
     @Override
@@ -110,6 +144,18 @@ public class NowPlayingActivity extends AppCompatActivity {
             isActivityPaused = false;
             seekBar.postDelayed(mUpdateProgress, 10);
         }
+
+        if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
+            shuffleButton.setImageResource(R.drawable.baseline_shuffle_white_24);
+        else
+            shuffleButton.setImageResource(R.drawable.shuffle_unuse);
+
+        if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ALL))
+            repeatButton.setImageResource(R.drawable.baseline_repeat_white_24);
+        else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ONE))
+            repeatButton.setImageResource(R.drawable.baseline_repeat_one_white_24);
+        else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_NONE))
+            repeatButton.setImageResource(R.drawable.shuffle_disabled);
     }
 
     @Override

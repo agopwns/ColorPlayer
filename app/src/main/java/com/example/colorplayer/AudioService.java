@@ -18,14 +18,18 @@ import android.util.Log;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.CommandActions;
+import com.example.colorplayer.utils.RepeatActions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AudioService extends Service {
 
     private final IBinder mBinder = new AudioServiceBinder();
     private MediaPlayer mMediaPlayer;
     private boolean isPrepared;
+    private boolean isShuffled = false;
+    private String repeatState = RepeatActions.REPEAT_ALL;
 
     public class AudioServiceBinder extends Binder {
         AudioService getService() {
@@ -121,17 +125,53 @@ public class AudioService extends Service {
 
     // 재생 목록 리스트
     private ArrayList<Long> mAudioIds = new ArrayList<>();
+    private ArrayList<Long> mShuffleAudioIds = new ArrayList<>();
+    private ArrayList<Long> mTempAudioIds = new ArrayList<>();
     public void setPlayList(ArrayList<Long> audioIds) {
         if (mAudioIds.size() != audioIds.size()) {
             if (!mAudioIds.equals(audioIds)) {
                 mAudioIds.clear();
                 mAudioIds.addAll(audioIds);
             }
+            // 랜덤 셔플 리스트 준비
+            mShuffleAudioIds = audioIds;
+            Collections.shuffle(mShuffleAudioIds);
         }
     }
 
     public ArrayList<Long> getPlayList(){
         return mAudioIds;
+    }
+
+    public void toggleShuffleList(){
+        if(!isShuffled){
+            // 랜덤으로 전환
+            mTempAudioIds = mAudioIds;
+            mAudioIds = mShuffleAudioIds;
+            isShuffled = true;
+        } else {
+            // 일반 재생으로 전환
+            mAudioIds = mTempAudioIds;
+            isShuffled = false;
+        }
+    }
+
+    public boolean getShuffleState(){
+        return isShuffled;
+    }
+
+    public void toggleRepeatState(){
+
+        if(repeatState.equals(RepeatActions.REPEAT_ALL))
+            repeatState = RepeatActions.REPEAT_ONE;
+        else if(repeatState.equals(RepeatActions.REPEAT_ONE))
+            repeatState = RepeatActions.REPEAT_NONE;
+        else if(repeatState.equals(RepeatActions.REPEAT_NONE))
+            repeatState = RepeatActions.REPEAT_ALL;
+    }
+
+    public String getRepeatState(){
+        return repeatState;
     }
 
     public int getSongPosition(){

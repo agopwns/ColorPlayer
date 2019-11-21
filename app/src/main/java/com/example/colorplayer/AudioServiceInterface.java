@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.RepeatActions;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,18 @@ public class AudioServiceInterface {
         if (mService != null) {
             mService.setPlayList(audioIds);
         }
+    }
+
+    public void toggleShuffleList(){
+        if(mService != null)
+            mService.toggleShuffleList();
+    }
+
+    public boolean getShuffleState(){
+        if(mService != null)
+            return mService.getShuffleState();
+        else
+            return false;
     }
 
     public ArrayList<Long> getPlayList() {
@@ -123,6 +136,18 @@ public class AudioServiceInterface {
         if (mService != null) {
             mService.setSeekTo(progress);
         }
+    }
+
+    public void toggleRepeatState(){
+        if (mService != null)
+            mService.toggleRepeatState();
+    }
+
+    public String getRepeatState(){
+        if (mService != null)
+            return mService.getRepeatState();
+        else
+            return RepeatActions.REPEAT_ALL;
     }
 
 }
