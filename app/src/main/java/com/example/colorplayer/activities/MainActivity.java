@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
-                if(AudioApplication.getInstance().getServiceInterface().isPlaying())
+                if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);
             }
         });
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
-                if(AudioApplication.getInstance().getServiceInterface().isPlaying())
+                if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);
             }
         });

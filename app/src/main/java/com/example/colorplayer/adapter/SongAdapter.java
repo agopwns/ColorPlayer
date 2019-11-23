@@ -101,11 +101,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             Intent moveIntent = new Intent(mContext.getApplicationContext(), NowPlayingActivity.class);
 
             // 재생 목록 세팅
+            // 랜덤 셔플이 다시 덮어씌워지지 않도록 방지하기 위한 Service 내부에 처리 되어 있음
             AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList());
 
-            // 이미 재생 되고 있는 곡이 있다면 선택한 오디오와 비교해서 같을 경우 플레이 x
-            //if(AudioApplication.getInstance().getServiceInterface().getSongPosition() != getAdapterPosition())
-                AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition()); // 선택한 오디오 재생
+            // 랜덤 재생 중일 시, 원래 리스트에서 플레이 한다.
+            if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
+                AudioApplication.getInstance().getServiceInterface().playShuffledClick(getAdapterPosition());
+            else
+                // 선택한 오디오 재생
+                AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition());
             mContext.startActivity(moveIntent);
         }
     }

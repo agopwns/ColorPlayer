@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.colorplayer.activities.MainActivity;
 import com.example.colorplayer.utils.CommandActions;
+import com.example.colorplayer.utils.RemoteViewSize;
 
 public class NotificationPlayer {
 
@@ -57,7 +58,10 @@ public class NotificationPlayer {
             super.onPreExecute();
             Intent mainActivity = new Intent(mService, MainActivity.class);
             mMainPendingIntent = PendingIntent.getActivity(mService, 0, mainActivity, 0);
-            mRemoteViews = createRemoteView(R.layout.notification_player);
+            if(mService.getRemoteViewSizeState().equals(RemoteViewSize.LARGE))
+                mRemoteViews = createRemoteView(R.layout.notification_large_player);
+            else
+                mRemoteViews = createRemoteView(R.layout.notification_player);
 
             mNotificationBuilder = new NotificationCompat.Builder(mService, "colorPlayerChannel");
             mNotificationBuilder
@@ -104,15 +108,25 @@ public class NotificationPlayer {
             Intent actionForward = new Intent(CommandActions.FORWARD);
             Intent actionRewind = new Intent(CommandActions.REWIND);
             Intent actionClose = new Intent(CommandActions.CLOSE);
+            Intent actionExpand = new Intent(CommandActions.EXPAND);
+            Intent actionCollapse = new Intent(CommandActions.COLLAPSE);
             PendingIntent togglePlay = PendingIntent.getService(mService, 0, actionTogglePlay, 0);
             PendingIntent forward = PendingIntent.getService(mService, 0, actionForward, 0);
             PendingIntent rewind = PendingIntent.getService(mService, 0, actionRewind, 0);
             PendingIntent close = PendingIntent.getService(mService, 0, actionClose, 0);
+            PendingIntent expand = PendingIntent.getService(mService, 0, actionExpand, 0);
+            PendingIntent collapse = PendingIntent.getService(mService, 0, actionCollapse, 0);
 
             remoteView.setOnClickPendingIntent(R.id.noti_btn_play_pause, togglePlay);
             remoteView.setOnClickPendingIntent(R.id.noti_btn_forward, forward);
             remoteView.setOnClickPendingIntent(R.id.noti_btn_rewind, rewind);
             remoteView.setOnClickPendingIntent(R.id.noti_btn_close, close);
+
+            //if(mService.getRemoteViewSizeState().equals(RemoteViewSize.LARGE))
+                remoteView.setOnClickPendingIntent(R.id.noti_btn_collapse, collapse);
+            //else
+                remoteView.setOnClickPendingIntent(R.id.noti_btn_expand, expand);
+
             return remoteView;
         }
 
@@ -133,6 +147,9 @@ public class NotificationPlayer {
             }
         }
 
+        private void updateRemoteViewSize(){
+
+        }
 
     }
 

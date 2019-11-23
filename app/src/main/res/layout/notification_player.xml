@@ -15,14 +15,6 @@
         android:src="@drawable/baseline_whatshot_black_18"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_vertical"
-        android:text="ColorPlayer"
-        android:textColor="@android:color/black"/>
-
-    <TextView
         android:id="@+id/noti_title"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -33,12 +25,21 @@
         android:textColor="@android:color/black"/>
 
     <ImageButton
+        android:id="@+id/noti_btn_expand"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/baseline_keyboard_arrow_down_black_24"/>
+
+    <ImageButton
         android:id="@+id/noti_btn_rewind"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:background="@null"
         android:scaleType="centerInside"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/baseline_keyboard_arrow_left_black_24"/>
 
     <ImageButton
@@ -47,7 +48,7 @@
         android:layout_height="22dp"
         android:background="@null"
         android:scaleType="centerInside"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/baseline_play_arrow_black_24"/>
 
     <ImageButton
@@ -56,7 +57,7 @@
         android:layout_height="25dp"
         android:background="@null"
         android:scaleType="centerInside"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/baseline_keyboard_arrow_right_black_24"/>
 
     <ImageButton

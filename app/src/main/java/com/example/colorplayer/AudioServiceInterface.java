@@ -39,6 +39,13 @@ public class AudioServiceInterface {
         }
     }
 
+    public boolean getPreparedState(){
+        if(mService != null)
+            return mService.getPreparedState();
+        else
+            return false;
+    }
+
     public void toggleShuffleList(){
         if(mService != null)
             mService.toggleShuffleList();
@@ -69,6 +76,12 @@ public class AudioServiceInterface {
     public void play(int position) {
         if (mService != null) {
             mService.play(position);
+        }
+    }
+
+    public void playShuffledClick(int position) {
+        if (mService != null) {
+            mService.playShuffledClick(position);
         }
     }
 
@@ -125,9 +138,23 @@ public class AudioServiceInterface {
         return 0;
     }
 
+    public long getPositionWhenStopped() {
+        if (mService != null) {
+            return mService.getPositionWhenStopped();
+        }
+        return 0;
+    }
+
     public long getDuration() {
         if (mService != null) {
             return mService.getDuration();
+        }
+        return 0;
+    }
+
+    public long getDurationWhenStopped() {
+        if (mService != null) {
+            return mService.getDurationWhenStopped();
         }
         return 0;
     }

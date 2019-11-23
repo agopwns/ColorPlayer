@@ -34,6 +34,8 @@
                 <action android:name="TOGGLE_PLAY"/>
                 <action android:name="FORWARD"/>
                 <action android:name="CLOSE"/>
+                <action android:name="EXPAND"/>
+                <action android:name="COLLAPSE"/>
             </intent-filter>
         </service>
     </application>

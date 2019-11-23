@@ -132,7 +132,7 @@ public class NowPlayingActivity extends AppCompatActivity {
                     repeatButton.setImageResource(R.drawable.baseline_repeat_white_24);
 
                 // 반복 상태 변경
-                AudioApplication.getInstance().getServiceInterface().toggleShuffleList();
+                AudioApplication.getInstance().getServiceInterface().toggleRepeatState();
             }
         });
     }
@@ -144,6 +144,9 @@ public class NowPlayingActivity extends AppCompatActivity {
             isActivityPaused = false;
             seekBar.postDelayed(mUpdateProgress, 10);
         }
+
+        if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
+            updateUINextSong();
 
         if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
             shuffleButton.setImageResource(R.drawable.baseline_shuffle_white_24);
@@ -187,7 +190,38 @@ public class NowPlayingActivity extends AppCompatActivity {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
             if(playButton != null){
+                if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
+                }else{
+                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+                }
+            }
+            if(albumArt != null){
+                // 앨범 이미지 로드
+                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
+                Glide
+                        .with(this)
+                        .load(uri)
+                        .error(R.drawable.ic_whatshot_24px_white)
+                        .into(albumArt);
+            }
+            // 타이틀, 아티스트
+            if(title != null && artist != null){
+                title.setText(song.title);
+                artist.setText(song.artistName);
+            }
+        }
+    }
+
+    private void updateUINextSongWhenStop() {
+        if(AudioApplication.getInstance() != null){
+            song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            if(playButton != null){
+                if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
+                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+                }else{
+                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
+                }
             }
             if(albumArt != null){
                 // 앨범 이미지 로드
@@ -219,7 +253,6 @@ public class NowPlayingActivity extends AppCompatActivity {
                 seekBar.setMax((int)maxDuration);
                 seekBar.setProgress((int) position);
 
-                // TODO : 초 단위 변경
                 totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
 
                 if (duration != null && this != null)
@@ -244,7 +277,11 @@ public class NowPlayingActivity extends AppCompatActivity {
             if (intent.getAction().equals(BroadcastActions.PLAY_STATE_CHANGED)) {
                 updateUI();
             } else if(intent.getAction().equals(BroadcastActions.PLAY_NEXT_SONG)) {
-                updateUINextSong();
+
+                if(AudioApplication.getInstance().getServiceInterface().isPlaying())
+                    updateUINextSong();
+                else
+                    updateUINextSongWhenStop();
             }
 
         }

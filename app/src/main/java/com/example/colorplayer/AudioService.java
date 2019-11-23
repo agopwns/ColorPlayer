@@ -18,6 +18,7 @@ import android.util.Log;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.CommandActions;
+import com.example.colorplayer.utils.RemoteViewSize;
 import com.example.colorplayer.utils.RepeatActions;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class AudioService extends Service {
     private boolean isPrepared;
     private boolean isShuffled = false;
     private String repeatState = RepeatActions.REPEAT_ALL;
+    private String remoteViewSize = RemoteViewSize.LARGE;
 
     public class AudioServiceBinder extends Binder {
         AudioService getService() {
@@ -69,7 +71,8 @@ public class AudioService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 isPrepared = false;
-                // Warning : ViewPager 에서 미디어 플레이어 사용시 오류가 난다는 상황을 많이 발견
+                // Warning : 곡이 준비되고 재생되는 것보다 빠르게 getPosition, getDuration 을 사용하려고
+                // 오류가 남.
                 // 에러시 다음 곡을 넘어가는 것을 방지하기 위해 다시 재생
                 mCurrentPosition--;
                 Log.d("AudioService", "setOnErrorListener 에러 발생");
@@ -108,6 +111,12 @@ public class AudioService extends Service {
             } else if (CommandActions.CLOSE.equals(action)) {
                 pause();
                 removeNotificationPlayer();
+            } else if (CommandActions.COLLAPSE.equals(action)){
+                remoteViewSize = RemoteViewSize.SMALL;
+                updateNotificationPlayer();
+            } else if (CommandActions.EXPAND.equals(action)){
+                remoteViewSize = RemoteViewSize.LARGE;
+                updateNotificationPlayer();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -128,7 +137,8 @@ public class AudioService extends Service {
     private ArrayList<Long> mShuffleAudioIds = new ArrayList<>();
     private ArrayList<Long> mTempAudioIds = new ArrayList<>();
     public void setPlayList(ArrayList<Long> audioIds) {
-        if (mAudioIds.size() != audioIds.size()) {
+        // 랜덤 셔플이 다시 덮어씌워지지 않도록 방지하기 위함
+        if (!isShuffled) {
             if (!mAudioIds.equals(audioIds)) {
                 mAudioIds.clear();
                 mAudioIds.addAll(audioIds);
@@ -141,6 +151,9 @@ public class AudioService extends Service {
 
     public ArrayList<Long> getPlayList(){
         return mAudioIds;
+    }
+    public boolean getPreparedState(){
+        return isPrepared;
     }
 
     public void toggleShuffleList(){
@@ -184,7 +197,32 @@ public class AudioService extends Service {
     private void queryAudioItem(int position) {
         try {
             mCurrentPosition = position;
+
             long audioId = mAudioIds.get(position);
+            Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            String[] projection = new String[]{
+                    "_id", "title", "artist", "album", "duration", "track", "artist_id", "album_id"
+            };
+            String selection = MediaStore.Audio.Media._ID + " = ?";
+            String[] selectionArgs = {String.valueOf(audioId)};
+            Cursor cursor = getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    song = SongLoader.getSongForCursor(cursor);
+                }
+                cursor.close();
+            }
+        } catch (Exception e){
+            Log.d("AudioService", "queryAudioItem 에러 발생 : " + e);
+        }
+    }
+
+    private void queryAudioItemShuffledClick(int position) {
+        try {
+            mCurrentPosition = position;
+
+            long audioId = mTempAudioIds.get(position);
             Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             String[] projection = new String[]{
                     "_id", "title", "artist", "album", "duration", "track", "artist_id", "album_id"
@@ -225,6 +263,12 @@ public class AudioService extends Service {
         prepare();
     }
 
+    public void playShuffledClick(int position) {
+        queryAudioItemShuffledClick(position);
+        stop();
+        prepare();
+    }
+
     public void play() {
         if (isPrepared) {
             mMediaPlayer.start();
@@ -247,10 +291,25 @@ public class AudioService extends Service {
     }
 
     public void forward() {
-        if (mAudioIds.size() - 1 > mCurrentPosition) {
-            mCurrentPosition++; // 다음 포지션으로 이동.
-        } else {
-            mCurrentPosition = 0; // 처음 포지션으로 이동.
+
+        if(repeatState.equals(RepeatActions.REPEAT_ALL)){
+            // 기존 로직
+            if (mAudioIds.size() - 1 > mCurrentPosition) {
+                mCurrentPosition++; // 다음 포지션으로 이동.
+            } else {
+                mCurrentPosition = 0; // 처음 포지션으로 이동.
+            }
+        }
+        else if(repeatState.equals(RepeatActions.REPEAT_ONE)){
+            // 아무것도 하지 않음. 포지션의 위치가 바뀌지 않기 때문에 한곡 반복
+        }
+        else if(repeatState.equals(RepeatActions.REPEAT_NONE)){
+            if (mAudioIds.size() - 1 > mCurrentPosition) {
+                mCurrentPosition++; // 다음 포지션으로 이동.
+            } else {
+                mCurrentPosition = 0; // 처음 포지션으로 이동.
+                pause();
+            }
         }
         play(mCurrentPosition);
         sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
@@ -275,14 +334,32 @@ public class AudioService extends Service {
     }
 
     public long getPosition() {
-        if(mMediaPlayer.isPlaying())
+        if(isPlaying())
+            return mMediaPlayer.getCurrentPosition();
+        else
+            return 0;
+    }
+
+    public long getPositionWhenStopped() {
+        if(isPrepared)
             return mMediaPlayer.getCurrentPosition();
         else
             return 0;
     }
 
     public long getDuration() {
-        if(mMediaPlayer.isPlaying())
+        if(isPlaying())
+            return mMediaPlayer.getDuration();
+        else
+            return 0;
+    }
+
+    public String getRemoteViewSizeState() {
+        return remoteViewSize;
+    }
+
+    public long getDurationWhenStopped() {
+        if(isPrepared)
             return mMediaPlayer.getDuration();
         else
             return 0;
