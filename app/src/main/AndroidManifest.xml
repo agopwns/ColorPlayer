@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.colorplayer">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".AudioApplication"
@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.NowPlayingActivity"></activity>
+        <activity android:name=".activities.PlayingListActivity"></activity>
+        <activity android:name=".activities.NowPlayingActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,17 +26,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".AudioService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="REWIND"/>
-                <action android:name="TOGGLE_PLAY"/>
-                <action android:name="FORWARD"/>
-                <action android:name="CLOSE"/>
-                <action android:name="EXPAND"/>
-                <action android:name="COLLAPSE"/>
+                <action android:name="REWIND" />
+                <action android:name="TOGGLE_PLAY" />
+                <action android:name="FORWARD" />
+                <action android:name="CLOSE" />
+                <action android:name="EXPAND" />
+                <action android:name="COLLAPSE" />
             </intent-filter>
         </service>
     </application>
