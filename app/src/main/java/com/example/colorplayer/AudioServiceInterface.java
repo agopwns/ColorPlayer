@@ -74,9 +74,28 @@ public class AudioServiceInterface {
             return returnList;
     }
 
+    public int getPlayingListCount() {
+        if (mService != null)
+            return mService.getPlayingListCount();
+        else
+            return 0;
+    }
+
     public int getSongPosition(){
         if(mService != null)
             return mService.getSongPosition();
+        else
+            return 0;
+    }
+
+    public void setSongPosition(int position){
+        if(mService != null)
+            mService.setSongPostion(position);
+    }
+
+    public int getTempCurrentPosition(){
+        if(mService != null)
+            return mService.getTempCurrentPosition();
         else
             return 0;
     }
@@ -104,6 +123,14 @@ public class AudioServiceInterface {
             mService.pause();
         }
     }
+
+    public void tempPause() {
+        if (mService != null) {
+            mService.tempPause();
+        }
+    }
+
+
 
     public void forward() {
         if (mService != null) {

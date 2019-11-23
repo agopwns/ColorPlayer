@@ -114,7 +114,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         }
     }
 
-    public long[] getSongIds() {
+    private long[] getSongIds() {
         long[] ret = new long[getItemCount()];
         for (int i = 0; i < getItemCount(); i++) {
             ret[i] = arraylist.get(i).id;
@@ -122,7 +122,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         return ret;
     }
 
-    public ArrayList<Long> getSongIdsList() {
+    private ArrayList<Long> getSongIdsList() {
         ArrayList<Long> ret = new ArrayList<Long>();
         for (int i = 0; i < getItemCount(); i++) {
             ret.add(arraylist.get(i).id);

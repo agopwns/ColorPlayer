@@ -17,8 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
-import com.example.colorplayer.AudioServiceInterface;
-import com.example.colorplayer.BroadcastActions;
+import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.RepeatActions;
@@ -35,6 +34,7 @@ public class NowPlayingActivity extends AppCompatActivity {
     SeekBar seekBar;
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
+    private int playCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,16 +142,10 @@ public class NowPlayingActivity extends AppCompatActivity {
         playingListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ALL))
-                    repeatButton.setImageResource(R.drawable.baseline_repeat_one_white_24);
-                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ONE))
-                    repeatButton.setImageResource(R.drawable.shuffle_disabled);
-                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_NONE))
-                    repeatButton.setImageResource(R.drawable.baseline_repeat_white_24);
-
-                // 반복 상태 변경
-                AudioApplication.getInstance().getServiceInterface().toggleRepeatState();
+                Intent moveIntent = new Intent(getApplicationContext(), PlayingListActivity.class);
+                moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
+                    startActivity(moveIntent);
             }
         });
     }
@@ -164,8 +158,12 @@ public class NowPlayingActivity extends AppCompatActivity {
             seekBar.postDelayed(mUpdateProgress, 10);
         }
 
-        if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
-            updateUINextSong();
+        if(AudioApplication.getInstance().getServiceInterface().getPreparedState()){
+            if(playCount != 0)
+                updateUINextSong();
+            playCount++;
+        }
+
 
         if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
             shuffleButton.setImageResource(R.drawable.baseline_shuffle_white_24);
@@ -196,11 +194,18 @@ public class NowPlayingActivity extends AppCompatActivity {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
             if(playButton != null){
+                // 기존
                 if (AudioApplication.getInstance().getServiceInterface().isPlaying()) {
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
                 } else {
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
                 }
+
+//                if (song != null) {
+//                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
+//                } else {
+//                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+//                }
             }
         }
     }
@@ -259,6 +264,30 @@ public class NowPlayingActivity extends AppCompatActivity {
         }
     }
 
+    private void updateUIEndToFirst() {
+        if(AudioApplication.getInstance() != null){
+
+            if(playButton != null)
+                playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+
+            song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+
+            long position = AudioApplication.getInstance().getServiceInterface().getPosition();
+            long maxDuration = AudioApplication.getInstance().getServiceInterface().getDuration();
+
+            if (seekBar != null && maxDuration != 0) {
+
+                seekBar.setMax((int)maxDuration);
+                seekBar.setProgress((int) position);
+
+                totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
+
+                if (duration != null && this != null && position / 1000 < maxDuration / 1000)
+                    duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
+            }
+        }
+    }
+
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -301,6 +330,11 @@ public class NowPlayingActivity extends AppCompatActivity {
                     updateUINextSong();
                 else
                     updateUINextSongWhenStop();
+            } else if(intent.getAction().equals(BroadcastActions.STOPPED)) {
+                // 시작 초, duration, 시크바 초기화
+                updateUIEndToFirst();
+                AudioApplication.getInstance().getServiceInterface().tempPause();
+
             }
 
         }
@@ -313,8 +347,12 @@ public class NowPlayingActivity extends AppCompatActivity {
         IntentFilter filterNext = new IntentFilter();
         filterNext.addAction(BroadcastActions.PLAY_NEXT_SONG);
 
+        IntentFilter filterStop = new IntentFilter();
+        filterStop.addAction(BroadcastActions.STOPPED);
+
         registerReceiver(mBroadcastReceiver, filterPlayState);
         registerReceiver(mBroadcastReceiver, filterNext);
+        registerReceiver(mBroadcastReceiver, filterStop);
     }
 
     public void unregisterBroadcast(){

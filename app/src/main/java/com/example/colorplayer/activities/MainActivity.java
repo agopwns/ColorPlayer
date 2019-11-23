@@ -27,7 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
-import com.example.colorplayer.BroadcastActions;
+import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.adapter.SectionPageAdapter;
 import com.example.colorplayer.animation.ZoomOutPageTransformer;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
+                moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);
             }
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
+                moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);
             }

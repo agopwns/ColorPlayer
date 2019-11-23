@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.utils.CommandActions;
 import com.example.colorplayer.utils.RemoteViewSize;
 import com.example.colorplayer.utils.RepeatActions;
@@ -32,6 +33,7 @@ public class AudioService extends Service {
     private boolean isShuffled = false;
     private String repeatState = RepeatActions.REPEAT_ALL;
     private String remoteViewSize = RemoteViewSize.LARGE;
+    private int tempCurrentPosition;
 
     public class AudioServiceBinder extends Binder {
         AudioService getService() {
@@ -191,6 +193,14 @@ public class AudioService extends Service {
         return mCurrentPosition;
     }
 
+    public void setSongPostion(int postion){
+        mCurrentPosition = postion;
+    }
+
+    public int getTempCurrentPosition(){
+        return tempCurrentPosition;
+    }
+
     // 현재 재생할 오디오 정보 가져오기
     private int mCurrentPosition;
     private Song song;
@@ -222,15 +232,25 @@ public class AudioService extends Service {
 
         ArrayList<Song> returnList = new ArrayList<>();
 
+
         try {
             for(int i = 0 ; i < mAudioIds.size(); i++ ){
                 queryAudioItem(i);
                 returnList.add(song);
             }
+            // 모든 리스트를 추가하고 원래 mCurrentPosition 으로 돌려주기
+            mCurrentPosition = tempCurrentPosition;
+            // song도 원래 재생 중인 곡으로 돌려주기
+            queryAudioItem(tempCurrentPosition);
+
         } catch (Exception e){
             Log.d("AudioService", "getAudioByCurrentIdList 에러 발생 : " + e);
         }
         return returnList;
+    }
+
+    public int getPlayingListCount(){
+        return mAudioIds.size();
     }
 
     private void queryAudioItemShuffledClick(int position) {
@@ -274,12 +294,15 @@ public class AudioService extends Service {
     // play 기능
     public void play(int position) {
         queryAudioItem(position);
+        tempCurrentPosition = position;
+        sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
         stop();
         prepare();
     }
 
     public void playShuffledClick(int position) {
         queryAudioItemShuffledClick(position);
+        sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
         stop();
         prepare();
     }
@@ -300,6 +323,13 @@ public class AudioService extends Service {
         }
     }
 
+    public void tempPause() {
+        if (isPrepared) {
+            mMediaPlayer.pause();
+            updateNotificationPlayer();
+        }
+    }
+
     private void stop() {
         mMediaPlayer.stop();
         mMediaPlayer.reset();
@@ -314,20 +344,31 @@ public class AudioService extends Service {
             } else {
                 mCurrentPosition = 0; // 처음 포지션으로 이동.
             }
+            play(mCurrentPosition);
+            sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
         }
         else if(repeatState.equals(RepeatActions.REPEAT_ONE)){
             // 아무것도 하지 않음. 포지션의 위치가 바뀌지 않기 때문에 한곡 반복
+            play(mCurrentPosition);
+            sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
         }
         else if(repeatState.equals(RepeatActions.REPEAT_NONE)){
             if (mAudioIds.size() - 1 > mCurrentPosition) {
                 mCurrentPosition++; // 다음 포지션으로 이동.
+                play(mCurrentPosition);
+                sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
             } else {
                 mCurrentPosition = 0; // 처음 포지션으로 이동.
-                pause();
+                play(mCurrentPosition);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
+                sendBroadcast(new Intent(BroadcastActions.STOPPED));
             }
         }
-        play(mCurrentPosition);
-        sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
     }
 
     public void rewind() {
