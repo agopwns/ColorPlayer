@@ -218,6 +218,21 @@ public class AudioService extends Service {
         }
     }
 
+    public ArrayList<Song> getPlayingListByCurrentIdList(){
+
+        ArrayList<Song> returnList = new ArrayList<>();
+
+        try {
+            for(int i = 0 ; i < mAudioIds.size(); i++ ){
+                queryAudioItem(i);
+                returnList.add(song);
+            }
+        } catch (Exception e){
+            Log.d("AudioService", "getAudioByCurrentIdList 에러 발생 : " + e);
+        }
+        return returnList;
+    }
+
     private void queryAudioItemShuffledClick(int position) {
         try {
             mCurrentPosition = position;

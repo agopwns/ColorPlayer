@@ -27,7 +27,8 @@ import com.example.colorplayer.utils.Time;
 public class NowPlayingActivity extends AppCompatActivity {
 
     ImageButton backButton, optionButton,
-            repeatButton, prevButton, playButton, nextButton, shuffleButton;
+            repeatButton, prevButton, playButton, nextButton, shuffleButton,
+            favoriteButton, playingListButton;
     ImageView albumArt;
     TextView title, artist, duration, totalTime;
     Song song;
@@ -121,6 +122,24 @@ public class NowPlayingActivity extends AppCompatActivity {
         // 반복 버튼
         repeatButton = findViewById(R.id.button_repeat);
         repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ALL))
+                    repeatButton.setImageResource(R.drawable.baseline_repeat_one_white_24);
+                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_ONE))
+                    repeatButton.setImageResource(R.drawable.shuffle_disabled);
+                else if(AudioApplication.getInstance().getServiceInterface().getRepeatState().equals(RepeatActions.REPEAT_NONE))
+                    repeatButton.setImageResource(R.drawable.baseline_repeat_white_24);
+
+                // 반복 상태 변경
+                AudioApplication.getInstance().getServiceInterface().toggleRepeatState();
+            }
+        });
+
+        // 재생중인 목록 버튼
+        playingListButton = findViewById(R.id.button_playing_list);
+        playingListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

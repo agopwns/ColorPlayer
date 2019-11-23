@@ -66,6 +66,14 @@ public class AudioServiceInterface {
             return returnList;
     }
 
+    public ArrayList<Song> getPlayingListByCurrentIdList() {
+        ArrayList<Song> returnList = new ArrayList<>();
+        if (mService != null)
+            return mService.getPlayingListByCurrentIdList();
+        else
+            return returnList;
+    }
+
     public int getSongPosition(){
         if(mService != null)
             return mService.getSongPosition();
