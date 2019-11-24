@@ -136,6 +136,14 @@ public class SongLoader {
         return result.size() < limit ? result : result.subList(0, limit);
     }
 
+    public static List<Song> getSongsForArtistId(Context context, String albumId, int limit) {
+        ArrayList<Song> result = getSongsForCursor(makeSongCursor(context, "artist_id LIKE ?", new String[]{albumId + "%"}));
+        if (result.size() < limit) {
+            result.addAll(getSongsForCursor(makeSongCursor(context, "artist_id LIKE ?", new String[]{"%_" + albumId + "%"})));
+        }
+        return result.size() < limit ? result : result.subList(0, limit);
+    }
+
     public static List<Song> searchSongs(Context context, String searchString, int limit) {
         ArrayList<Song> result = getSongsForCursor(makeSongCursor(context, "title LIKE ?", new String[]{searchString + "%"}));
         if (result.size() < limit) {

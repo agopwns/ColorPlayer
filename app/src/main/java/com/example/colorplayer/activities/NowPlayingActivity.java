@@ -272,18 +272,32 @@ public class NowPlayingActivity extends AppCompatActivity {
 
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
 
-            long position = AudioApplication.getInstance().getServiceInterface().getPosition();
-            long maxDuration = AudioApplication.getInstance().getServiceInterface().getDuration();
+            if(albumArt != null){
+                // 앨범 이미지 로드
+                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
+                Glide
+                        .with(this)
+                        .load(uri)
+                        .error(R.drawable.ic_whatshot_24px_white)
+                        .into(albumArt);
+            }
+            // 타이틀, 아티스트
+            if(title != null && artist != null){
+                title.setText(song.title);
+                artist.setText(song.artistName);
+            }
+
+            long maxDuration = song.duration;
 
             if (seekBar != null && maxDuration != 0) {
 
                 seekBar.setMax((int)maxDuration);
-                seekBar.setProgress((int) position);
+                seekBar.setProgress(0);
 
                 totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
 
-                if (duration != null && this != null && position / 1000 < maxDuration / 1000)
-                    duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
+                if (duration != null && this != null)
+                    duration.setText(Time.makeShortTimeString(getApplication(), 0));
             }
         }
     }
@@ -303,7 +317,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 
                 totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
 
-                if (duration != null && this != null)
+                if (duration != null && this != null && position / 1000 <= maxDuration / 1000)
                     duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
             }
             overflowcounter--;

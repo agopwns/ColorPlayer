@@ -65,7 +65,7 @@ public class ArtistListFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             if (mAdapter != null) {
-                mAdapter.setHasStableIds(true);
+                //mAdapter.setHasStableIds(true);
                 recyclerView.setAdapter(mAdapter);
             }
             if (getActivity() != null) {

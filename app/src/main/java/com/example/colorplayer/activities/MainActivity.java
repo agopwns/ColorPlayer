@@ -27,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
+import com.example.colorplayer.fragment.FolderListFragment;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.adapter.SectionPageAdapter;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new SongListFragment(), "노래");
         adapter.addFragment(new AlbumListFragment(), "앨범");
         adapter.addFragment(new ArtistListFragment(), "아티스트");
-        adapter.addFragment(new ArtistListFragment(), "폴더");
+        adapter.addFragment(new FolderListFragment(), "폴더");
         adapter.addFragment(new ArtistListFragment(), "재생목록");
 
         viewPager.setAdapter(adapter);

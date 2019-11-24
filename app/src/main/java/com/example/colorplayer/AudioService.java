@@ -295,7 +295,7 @@ public class AudioService extends Service {
     public void play(int position) {
         queryAudioItem(position);
         tempCurrentPosition = position;
-        sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
+        //sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
         stop();
         prepare();
     }
