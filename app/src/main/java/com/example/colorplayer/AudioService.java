@@ -19,6 +19,7 @@ import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.utils.CommandActions;
+import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RemoteViewSize;
 import com.example.colorplayer.utils.RepeatActions;
 
@@ -34,6 +35,8 @@ public class AudioService extends Service {
     private String repeatState = RepeatActions.REPEAT_ALL;
     private String remoteViewSize = RemoteViewSize.LARGE;
     private int tempCurrentPosition;
+    private PreferencesUtility mPreferences;
+    private boolean isFirstPlay = true;
 
     public class AudioServiceBinder extends Binder {
         AudioService getService() {
@@ -58,6 +61,11 @@ public class AudioService extends Service {
                 // 준비 상태를 NowPlayingActivity 에 알리기 위함
                 sendBroadcast(new Intent(BroadcastActions.PREPARED));
                 updateNotificationPlayer();
+
+                if(isFirstPlay){
+                    pause();
+                    isFirstPlay = false;
+                }
             }
         });
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -73,8 +81,8 @@ public class AudioService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 isPrepared = false;
-                // Warning : 곡이 준비되고 재생되는 것보다 빠르게 getPosition, getDuration 을 사용하려고
-                // 오류가 남.
+                // Warning : 곡이 준비되고 재생되는 것보다 빠르게 getPosition, getDuration 을
+                // 사용하려고 할 경우 오류 발생함.
                 // 에러시 다음 곡을 넘어가는 것을 방지하기 위해 다시 재생
                 mCurrentPosition--;
                 Log.d("AudioService", "setOnErrorListener 에러 발생");
@@ -88,16 +96,34 @@ public class AudioService extends Service {
 
             }
         });
+
+        // 맨 처음 시작시
+        mPreferences = PreferencesUtility.getInstance(getApplicationContext());
+        if(mPreferences.getPlayingSongId() != 0){
+            song = SongLoader.getSongForID(getApplicationContext(), mPreferences.getPlayingSongId());
+            mAudioIds.add(song.id);
+            setPlayList(mAudioIds);
+//            playWhenAppStart();
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            sendBroadcast(new Intent(BroadcastActions.STOPPED));
+        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+
         return mBinder;
     }
 
     // RemoteView 를 클릭시 해당 함수를 통해 action 이 들어오고 그에 맞는 서비스 동작을 실행한다
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
         if (intent != null) {
             String action = intent.getAction();
             if (CommandActions.TOGGLE_PLAY.equals(action)) {
@@ -232,7 +258,6 @@ public class AudioService extends Service {
 
         ArrayList<Song> returnList = new ArrayList<>();
 
-
         try {
             for(int i = 0 ; i < mAudioIds.size(); i++ ){
                 queryAudioItem(i);
@@ -282,6 +307,8 @@ public class AudioService extends Service {
         try {
             // TODO : path 수정
             Uri uri = Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "" + song.id);
+
+            mPreferences.setPlayingSongId(song.id);
             mMediaPlayer.setDataSource(getApplicationContext(), uri);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.prepareAsync();
@@ -297,6 +324,14 @@ public class AudioService extends Service {
         tempCurrentPosition = position;
         //sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
         stop();
+        prepare();
+    }
+
+    public void playWhenAppStart() {
+        //queryAudioItem(position);
+        //tempCurrentPosition = position;
+        //sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
+        //mMediaPlayer.start();
         prepare();
     }
 

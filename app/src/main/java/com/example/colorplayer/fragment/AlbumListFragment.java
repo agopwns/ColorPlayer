@@ -48,6 +48,7 @@ public class AlbumListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_album_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_album_list);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         if (getActivity() != null)

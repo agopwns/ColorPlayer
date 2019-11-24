@@ -348,7 +348,6 @@ public class NowPlayingActivity extends AppCompatActivity {
                 // 시작 초, duration, 시크바 초기화
                 updateUIEndToFirst();
                 AudioApplication.getInstance().getServiceInterface().tempPause();
-
             }
 
         }

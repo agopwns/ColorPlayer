@@ -24,6 +24,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
 
 public final class PreferencesUtility {
 
@@ -58,6 +63,10 @@ public final class PreferencesUtility {
     private static final String ARTIST_ALBUM_IMAGE_MOBILE = "artist_album_image_mobile";
     private static final String ALWAYS_LOAD_ALBUM_IMAGES_LASTFM = "always_load_album_images_lastfm";
 
+    // 추가
+    private static final String PLAYING_SONG_ID = "PLAYING_SONG_ID";
+    public static final String FOLDER_LIST = "FOLDER_LIST";
+
     private static PreferencesUtility sInstance;
 
     private static SharedPreferences mPreferences;
@@ -79,6 +88,26 @@ public final class PreferencesUtility {
 
     public void setOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         mPreferences.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    public void setString(String key, String value){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public String getString(String key){
+        return mPreferences.getString(key, "");
+    }
+
+    public void setPlayingSongId(long songId){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putLong(PLAYING_SONG_ID, songId);
+        editor.apply();
+    }
+
+    public long getPlayingSongId(){
+        return mPreferences.getLong(PLAYING_SONG_ID, 0);
     }
 
     public boolean isArtistsInGrid() {
@@ -255,6 +284,37 @@ public final class PreferencesUtility {
 
     public boolean getSetAlbumartLockscreen() {
         return mPreferences.getBoolean(SHOW_LOCKSCREEN_ALBUMART, true);
+    }
+
+    public void setStringArrayPref(Context context, String key, ArrayList<String> values) {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        JSONArray a = new JSONArray();
+        for (int i = 0; i < values.size(); i++) {
+            a.put(values.get(i));
+        }
+        if (!values.isEmpty()) {
+            editor.putString(key, a.toString());
+        } else {
+            editor.putString(key, null);
+        }
+        editor.apply();
+    }
+
+    public ArrayList<String> getStringArrayPref(Context context, String key) {
+        String json = mPreferences.getString(key, null);
+        ArrayList<String> urls = new ArrayList<String>();
+        if (json != null) {
+            try {
+                JSONArray a = new JSONArray(json);
+                for (int i = 0; i < a.length(); i++) {
+                    String url = a.optString(i);
+                    urls.add(url);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return urls;
     }
 
 //    public void updateService(Bundle extras) {

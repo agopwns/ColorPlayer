@@ -21,6 +21,8 @@ public class AudioServiceInterface {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mService = ((AudioService.AudioServiceBinder) service).getService();
+                mService.playWhenAppStart();
+                mService.tempPause();
             }
 
             @Override
