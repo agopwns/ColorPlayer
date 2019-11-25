@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
+import com.example.colorplayer.db.SongInfoDB;
+import com.example.colorplayer.db.SongInfoDao;
+import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.model.Song;
@@ -32,9 +35,11 @@ public class NowPlayingActivity extends AppCompatActivity {
     TextView title, artist, duration, totalTime;
     Song song;
     SeekBar seekBar;
+    private SongInfoDao dao;
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
     private int playCount = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,8 @@ public class NowPlayingActivity extends AppCompatActivity {
         registerBroadcast();
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
         updateUINextSong();
+
+        dao = SongInfoDB.getInstance(this).songInfoDao();
 
         title.setSelected(true);
 
@@ -148,6 +155,32 @@ public class NowPlayingActivity extends AppCompatActivity {
                     startActivity(moveIntent);
             }
         });
+
+        // 좋아요 버튼
+        favoriteButton = findViewById(R.id.button_favorite);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 현재 곡 id, isFavorite 저장
+                SongInfo songInfo = new SongInfo();
+                songInfo.setId(song.id);
+                SongInfo beforeSongInfo = dao.getSongInfosById(song.id);
+                if(beforeSongInfo == null){
+                    songInfo.setFavorite(true);
+                    favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                    dao.insertSongInfo(songInfo);
+                } else {
+                    if(beforeSongInfo.isFavorite()){
+                        songInfo.setFavorite(false);
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                    } else {
+                        songInfo.setFavorite(true);
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                    }
+                    dao.updateSongInfo(songInfo);
+                }
+            }
+        });
     }
 
     @Override
@@ -163,8 +196,6 @@ public class NowPlayingActivity extends AppCompatActivity {
                 updateUINextSong();
             playCount++;
         }
-
-
         if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
             shuffleButton.setImageResource(R.drawable.baseline_shuffle_white_24);
         else
@@ -194,18 +225,11 @@ public class NowPlayingActivity extends AppCompatActivity {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
             if(playButton != null){
-                // 기존
                 if (AudioApplication.getInstance().getServiceInterface().isPlaying()) {
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
                 } else {
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
                 }
-
-//                if (song != null) {
-//                    playButton.setImageResource(R.drawable.baseline_pause_white_36);
-//                } else {
-//                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
-//                }
             }
         }
     }
@@ -219,6 +243,13 @@ public class NowPlayingActivity extends AppCompatActivity {
                 }else{
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
                 }
+            }
+            // 좋아요 버튼
+            if(favoriteButton != null){
+                if(dao.getSongInfosById(song.id).isFavorite())
+                    favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                else
+                    favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
             }
             if(albumArt != null){
                 // 앨범 이미지 로드
@@ -234,6 +265,8 @@ public class NowPlayingActivity extends AppCompatActivity {
                 title.setText(song.title);
                 artist.setText(song.artistName);
             }
+
+
         }
     }
 

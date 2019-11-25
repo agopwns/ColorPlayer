@@ -1,8 +1,5 @@
 package com.example.colorplayer.model;
 
-import android.graphics.Movie;
-
-
 public class Song {
 
     public final long albumId;
