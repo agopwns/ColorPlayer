@@ -42,7 +42,7 @@ public class ArtistListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_artist_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_artist_list);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(mAdapter);
 

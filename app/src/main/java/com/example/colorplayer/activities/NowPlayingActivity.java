@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
@@ -56,8 +58,6 @@ public class NowPlayingActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.song_progress_normal);
 
         registerBroadcast();
-        // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
-        updateUINextSong();
 
         dao = SongInfoDB.getInstance(this).songInfoDao();
 
@@ -181,6 +181,8 @@ public class NowPlayingActivity extends AppCompatActivity {
                 }
             }
         });
+        // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
+        updateUINextSong();
     }
 
     @Override
@@ -234,6 +236,17 @@ public class NowPlayingActivity extends AppCompatActivity {
         }
     }
 
+    private void testPlayCount(){
+        if(song != null && dao != null){
+            SongInfo temp = dao.getSongInfosById(song.id);
+            if(temp != null){
+                Log.d("testPlayCount", "현재 곡 id : " + temp.getId()
+                        + "\r\n현재 곡 제목 : " + temp.getTitle()
+                        + "\r\n현재 곡 재생 카운트 : " + temp.getPlayCount());
+            }
+        }
+    }
+
     private void updateUINextSong() {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
@@ -245,12 +258,19 @@ public class NowPlayingActivity extends AppCompatActivity {
                 }
             }
             // 좋아요 버튼
-            if(favoriteButton != null){
-                if(dao.getSongInfosById(song.id).isFavorite())
-                    favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
-                else
+            if(favoriteButton != null && song != null){
+                SongInfo songInfo = dao.getSongInfosById(song.id);
+                if(songInfo != null){
+                    if(songInfo.isFavorite())
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                    else
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                } else {
                     favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                }
             }
+            testPlayCount();
+
             if(albumArt != null){
                 // 앨범 이미지 로드
                 Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
@@ -280,6 +300,19 @@ public class NowPlayingActivity extends AppCompatActivity {
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
                 }
             }
+            // 좋아요 버튼
+            if(favoriteButton != null && song != null){
+                SongInfo songInfo = dao.getSongInfosById(song.id);
+                if(songInfo != null){
+                    if(songInfo.isFavorite())
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                    else
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                } else {
+                    favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                }
+            }
+            testPlayCount();
             if(albumArt != null){
                 // 앨범 이미지 로드
                 Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);
@@ -305,6 +338,19 @@ public class NowPlayingActivity extends AppCompatActivity {
 
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
 
+            // 좋아요 버튼
+            if(favoriteButton != null && song != null){
+                SongInfo songInfo = dao.getSongInfosById(song.id);
+                if(songInfo != null){
+                    if(songInfo.isFavorite())
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_white_24);
+                    else
+                        favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                } else {
+                    favoriteButton.setImageResource(R.drawable.baseline_favorite_border_white_24);
+                }
+            }
+            testPlayCount();
             if(albumArt != null){
                 // 앨범 이미지 로드
                 Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), song.albumId);

@@ -66,6 +66,7 @@ public final class PreferencesUtility {
     // 추가
     private static final String PLAYING_SONG_ID = "PLAYING_SONG_ID";
     public static final String FOLDER_LIST = "FOLDER_LIST";
+    public static final String VIEW_PAGER_POSITION = "VIEW_PAGER_POSITION";
 
     private static PreferencesUtility sInstance;
 

@@ -16,7 +16,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.example.colorplayer.dataloader.SongLoader;
+import com.example.colorplayer.db.SongInfoDB;
+import com.example.colorplayer.db.SongInfoDao;
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.utils.CommandActions;
 import com.example.colorplayer.utils.PreferencesUtility;
@@ -37,6 +40,7 @@ public class AudioService extends Service {
     private int tempCurrentPosition;
     private PreferencesUtility mPreferences;
     private boolean isFirstPlay = true;
+    private SongInfoDao dao;
 
     public class AudioServiceBinder extends Binder {
         AudioService getService() {
@@ -53,6 +57,8 @@ public class AudioService extends Service {
         mNotificationPlayer = new NotificationPlayer(this);
         createNotificationChannel();
 
+        dao = SongInfoDB.getInstance(this).songInfoDao();
+
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -65,6 +71,22 @@ public class AudioService extends Service {
                 if(isFirstPlay){
                     pause();
                     isFirstPlay = false;
+                } else {
+                    // 앱 종료 전 Shared 로 임시 저장한 곡을 제외한
+                    // 새로운 곡이 플레이 될 때 재생 카운트 저장
+                    if(song != null) {
+                        SongInfo songInfo = dao.getSongInfosById(song.id);
+                        if (songInfo != null) {
+                            songInfo.setPlayCount(songInfo.getPlayCount() + 1);
+                            dao.updateSongInfo(songInfo);
+                        } else {
+                            SongInfo newSongfInfo = new SongInfo();
+                            newSongfInfo.setId(song.id);
+                            newSongfInfo.setTitle(song.title);
+                            newSongfInfo.setPlayCount(1);
+                            dao.insertSongInfo(newSongfInfo);
+                        }
+                    }
                 }
             }
         });

@@ -48,4 +48,6 @@
         android:id="@+id/bottom_now_playing_bar"
         layout="@layout/bottom_nowplaying_card"/>
 
+
+
 </LinearLayout>

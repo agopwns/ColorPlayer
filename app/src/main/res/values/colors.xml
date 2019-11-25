@@ -3,6 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorBackgroundRed">#FF6357</color>
     <color name="colorMildYellow">#FFC107</color>
     <color name="colorRedOrange">#F44336</color>
     <color name="colorOpacity0">#00FFFFFF</color>
@@ -13,6 +14,7 @@
     <color name="colorOpacity50">#80FFFFFF</color>
     <color name="colorOpacity70">#B3FFFFFF</color>
     <color name="colorBlackOpacity10">#1A000000</color>
+    <color name="colorBlackOpacity30">#4D000000</color>
     <color name="colorBlackOpacity50">#80000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorWhiteGrey">#E2E2E2</color>

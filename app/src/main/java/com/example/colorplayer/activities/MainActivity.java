@@ -3,22 +3,26 @@ package com.example.colorplayer.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,9 +34,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
-import com.example.colorplayer.adapter.FolderAdapter;
-import com.example.colorplayer.dataloader.FolderLoader;
+import com.example.colorplayer.db.PlayListDB;
+import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.fragment.FolderListFragment;
+import com.example.colorplayer.fragment.PlayListFragment;
+import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.adapter.SectionPageAdapter;
@@ -42,13 +48,7 @@ import com.example.colorplayer.fragment.AlbumListFragment;
 import com.example.colorplayer.fragment.ArtistListFragment;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.PreferencesUtility;
-import com.example.colorplayer.utils.Time;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.File;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     Song song;
     SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
     private PreferencesUtility mPreferences;
+    private int pagePosition = 0;
+    private PlayListDao playListDao;
+    String result; // 재생 목록 이름
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         registerBroadcast();
 
         mPreferences = PreferencesUtility.getInstance(getApplicationContext());
+        playListDao = PlayListDB.getInstance(this).playListDao();
 
         albumArt = findViewById(R.id.album_art);
         title = findViewById(R.id.music_title);
@@ -121,13 +125,38 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        setupViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+            @Override
+            public void onPageSelected(int position) {
+                // 뷰페이저 선택된 포지션 쉐어드 저장
+                mPreferences.setString(mPreferences.VIEW_PAGER_POSITION, "" + position);
+                if(position == 4){
+                    // 재생목록 탭일시 add 아이콘 필요하므로 메뉴 xml 변경
+                    tb.getMenu().clear();
+                    tb.inflateMenu(R.menu.menu_play_list);
+                } else {
+                    tb.getMenu().clear();
+                    tb.inflateMenu(R.menu.menu);
+                }
+                pagePosition = position;
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        // 쉐어드에 저장된 페이지
+        String initPosition = mPreferences.getString(mPreferences.VIEW_PAGER_POSITION);
+        if(!initPosition.equals(""))
+            setupViewPager(mViewPager, Integer.parseInt(initPosition));
+        else
+            setupViewPager(mViewPager, 0);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        // TODO : 탭 커스텀 레이아웃 적용
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(createTabView("노래")));
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(createTabView("아티스트")));
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(createTabView("앨범")));
         tabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -150,22 +179,91 @@ public class MainActivity extends AppCompatActivity {
         return tabView;
 
     }
-    public void setupViewPager(ViewPager viewPager) {
+    public void setupViewPager(ViewPager viewPager, int position) {
         adapter.addFragment(new SongListFragment(), "노래");
         adapter.addFragment(new AlbumListFragment(), "앨범");
         adapter.addFragment(new ArtistListFragment(), "아티스트");
         adapter.addFragment(new FolderListFragment(), "폴더");
-        adapter.addFragment(new ArtistListFragment(), "재생목록");
+        adapter.addFragment(new PlayListFragment(), "재생목록");
 
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(position);
     }
 
     // Toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        if(pagePosition == 4)
+            inflater.inflate(R.menu.menu_play_list, menu);
+        else
+            inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+
+            case R.id.icon_search:
+            case R.id.icon_option:
+            case R.id.icon_add :
+                createPlayList(getWindowManager().getDefaultDisplay());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // 호출할 다이얼로그 함수를 정의한다.
+    public void createPlayList(Display display) {
+
+        // 커스텀 다이얼로그를 정의하기위해 Dialog클래스를 생성한다.
+        final Dialog dlg = new Dialog(this);
+
+        // 액티비티의 타이틀바를 숨긴다.
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // 커스텀 다이얼로그의 레이아웃을 설정한다.
+        dlg.setContentView(R.layout.custom_dialog);
+
+        // 커스텀 다이얼로그를 노출한다.
+        dlg.show();
+
+        // 다이얼로그 크기 재설정
+        Point size =new Point();
+        display.getSize(size);
+        Window window = dlg.getWindow();
+        int x = (int)(size.x * 0.9f);
+        int y = (int)(size.y * 0.27f);
+        window.setLayout(x, y);
+
+        // 커스텀 다이얼로그의 각 위젯들을 정의한다.
+        final EditText message = (EditText) dlg.findViewById(R.id.mesgase);
+        final Button okButton = (Button) dlg.findViewById(R.id.okButton);
+        final Button cancelButton = (Button) dlg.findViewById(R.id.cancelButton);
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // '확인' 버튼 클릭시 저장
+                String result = message.getText().toString();
+                // 재생 목록 생성 후 DB 저장
+                PlayList playList = new PlayList();
+                playList.setTitle(result);
+                playListDao.insertPlayList(playList);
+                Toast.makeText(getApplicationContext(), "\"" +  message.getText().toString() + "\" 으로 재생 목록을 만들었습니다.", Toast.LENGTH_SHORT).show();
+                // 커스텀 다이얼로그를 종료한다.
+                dlg.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "취소 했습니다.", Toast.LENGTH_SHORT).show();
+                // 커스텀 다이얼로그를 종료한다.
+                dlg.dismiss();
+            }
+        });
     }
 
     public void checkPermission(){

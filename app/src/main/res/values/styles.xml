@@ -27,4 +27,13 @@
         -->
     </style>
 
+    <style name="EditTextStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlActivated">@color/colorWhite</item>
+        <item name="android:colorControlNormal">@color/colorWhite</item>
+        <item name="android:colorControlActivated">@color/colorWhite</item>
+        <item name="android:colorButtonNormal">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorOpacity10</item>
+    </style>
+
+
 </resources>
