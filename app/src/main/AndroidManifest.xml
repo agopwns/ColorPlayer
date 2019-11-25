@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SelectSongActivity"></activity>
+        <activity android:name=".activities.SelectSongActivity"></activity>
         <activity android:name=".activities.MyPlayingListActivity" />
         <activity android:name=".activities.PlayingListActivity" />
         <activity android:name=".activities.NowPlayingActivity" />

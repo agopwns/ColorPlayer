@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
 
     public int currentlyPlayingPosition;
     private List<Song> arraylist;
+    public List<Song> returnList;
     private AppCompatActivity mContext;
     private long[] songIDs;
     private boolean isPlaylist;
@@ -35,7 +37,6 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
     private String ateKey;
     private long playlistId;
     private SongEventListener listener;
-
 
     // 생성자에서 데이터 ArrayList 와 Context 전달 받음
     public SelectListAdapter(AppCompatActivity context, List<Song> arraylist, boolean isPlaylistSong, boolean animate) {
@@ -53,8 +54,9 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
     }
 
     @Override
-    public void onBindViewHolder(SongHolder holder, int position) {
+    public void onBindViewHolder(SongHolder holder, final int position) {
         final Song song = getSong(position);
+
         if(song!=null){
             holder.musicTitle.setText(song.title);
             holder.musicArtist.setText(song.artistName);
@@ -66,6 +68,20 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
                 .load(uri)
                 .error(R.drawable.test)
                 .into(holder.albumArt);
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox checkBox = (CheckBox) v;
+                    if(!checkBox.isChecked()){
+                        checkBox.setChecked(true);
+                        returnList.add(song);
+                    } else {
+                        checkBox.setChecked(false);
+                        returnList.remove(position);
+                    }
+                }
+            });
         }
     }
 
@@ -89,25 +105,20 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
             musicTitle = itemView.findViewById(R.id.music_title);
             musicArtist = itemView.findViewById(R.id.music_artist);
             albumArt = itemView.findViewById(R.id.album_art);
-            checkBox = itemView.findViewById(R.id.checkbox_select_all);
+            checkBox = itemView.findViewById(R.id.checkbox_select_one);
             itemView.setOnClickListener(this);
         }
 
+
         @Override
         public void onClick(View v) {
-            Intent moveIntent = new Intent(mContext.getApplicationContext(), NowPlayingActivity.class);
 
-            // 재생 목록 세팅
-            // 랜덤 셔플이 다시 덮어씌워지지 않도록 방지하기 위한 Service 내부에 처리 되어 있음
-            AudioApplication.getInstance().getServiceInterface().setPlayList(getSongIdsList());
+            if(!checkBox.isChecked()){
+                checkBox.setChecked(true);
+            } else {
+                checkBox.setChecked(false);
+            }
 
-            // 랜덤 재생 중일 시, 원래 리스트에서 플레이 한다.
-            if(AudioApplication.getInstance().getServiceInterface().getShuffleState())
-                AudioApplication.getInstance().getServiceInterface().playShuffledClick(getAdapterPosition());
-            else
-                // 선택한 오디오 재생
-                AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition());
-            mContext.startActivity(moveIntent);
         }
     }
 
@@ -127,11 +138,6 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
         return ret;
     }
 
-//    @Override
-//    public void updateDataSet(List<Song> arraylist) {
-//        this.arraylist = arraylist;
-//        this.songIDs = getSongIds();
-//    }
 
 
 

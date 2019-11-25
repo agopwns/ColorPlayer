@@ -41,6 +41,8 @@ public class MyPlayingListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // TODO : add 버튼
     }
     @Override
     protected void onResume() {
