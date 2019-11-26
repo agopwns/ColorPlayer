@@ -3,6 +3,8 @@ package com.example.colorplayer;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -66,6 +68,10 @@ public class AudioService extends Service {
                 mp.start();
                 // 준비 상태를 NowPlayingActivity 에 알리기 위함
                 sendBroadcast(new Intent(BroadcastActions.PREPARED));
+
+                // 위젯 앨범 업데이트는 PREPARED 를 보낸다
+                sendBroadcastForWidget(BroadcastActions.PREPARED);
+
                 updateNotificationPlayer();
 
                 if(isFirstPlay){
@@ -133,6 +139,14 @@ public class AudioService extends Service {
 //            }
 //            sendBroadcast(new Intent(BroadcastActions.STOPPED));
         }
+    }
+
+    private void sendBroadcastForWidget(String action) {
+        AppWidgetManager widgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), MyAppWidgetProvider.class));
+        Intent updateIntent = new Intent(action, null, getApplicationContext(), MyAppWidgetProvider.class);
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        sendBroadcast(updateIntent);
     }
 
     @Override
@@ -360,6 +374,7 @@ public class AudioService extends Service {
     public void playShuffledClick(int position) {
         queryAudioItemShuffledClick(position);
         sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
+        sendBroadcastForWidget(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         stop();
         prepare();
     }
@@ -368,6 +383,7 @@ public class AudioService extends Service {
         if (isPrepared) {
             mMediaPlayer.start();
             sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
+            sendBroadcastForWidget(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             updateNotificationPlayer();
         }
     }
@@ -376,6 +392,7 @@ public class AudioService extends Service {
         if (isPrepared) {
             mMediaPlayer.pause();
             sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
+            sendBroadcastForWidget(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             updateNotificationPlayer();
         }
     }

@@ -21,12 +21,12 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
 
 
-
         String action = intent.getAction();
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_large_player);
         if (BroadcastActions.PREPARED.equals(action)) {
             updateAlbumArt(context, remoteViews); // 재생음악 파일이 변경된 경우.
         }
+        //updateAlbumArt(context, remoteViews); // 재생음악 파일이 변경된 경우.
         updatePlayState(context, remoteViews); // 재생상태 업데이트.
         updateWidget(context, remoteViews); // 앱위젯 업데이트.
     }
@@ -57,7 +57,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         if (AudioApplication.getInstance().getServiceInterface().getAudioItem() != null) {
             title = AudioApplication.getInstance().getServiceInterface().getAudioItem().title;
         }
-        remoteViews.setTextViewText(R.id.noti_title, title);
+        remoteViews.setTextViewText(R.id.widget_title, title);
 
         Intent actionLaunch = new Intent(context, MainActivity.class);
         Intent actionTogglePlay = new Intent(CommandActions.TOGGLE_PLAY);

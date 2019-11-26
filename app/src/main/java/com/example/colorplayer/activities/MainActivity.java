@@ -34,6 +34,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
+import com.example.colorplayer.OnLockService;
 import com.example.colorplayer.db.PlayListDB;
 import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.fragment.FolderListFragment;
@@ -74,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
         checkPermission();
 
         registerBroadcast();
+
+        // 화면 체크 서비스 시작
+        Intent intent = new Intent(
+                getApplicationContext(),//현재제어권자
+                OnLockService.class); // 이동할 컴포넌트
+        startService(intent);
 
         mPreferences = PreferencesUtility.getInstance(getApplicationContext());
         playListDao = PlayListDB.getInstance(this).playListDao();
@@ -416,7 +423,4 @@ public class MainActivity extends AppCompatActivity {
     public void unregisterBroadcast(){
         unregisterReceiver(mBroadcastReceiver);
     }
-
-
-
 }

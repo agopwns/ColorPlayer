@@ -7,11 +7,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <permission android:name="com.leeds.example.broadcast.permission.ACTION_PERMISSION" android:protectionLevel="signature"/>
-    <uses-permission android:name="com.leeds.example.broadcast.permission.ACTION_PERMISSION" />
-    <permission android:name="com.leeds.example.broadcast.permission.ACTION_ANOTHER" android:protectionLevel="signature"/>
-    <uses-permission android:name="com.leeds.example.broadcast.permission.ACTION_ANOTHER" />
 
     <application
         android:name=".AudioApplication"
@@ -22,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.SelectSongActivity"></activity>
+        <activity android:name=".LockScreenActivity"></activity>
+        <activity android:name=".activities.SelectSongActivity" />
         <activity android:name=".activities.CustomListActivity" />
         <activity android:name=".activities.PlayingListActivity" />
         <activity android:name=".activities.PlayerActivity" />
@@ -52,15 +50,41 @@
             android:name=".MyAppWidgetProvider"
             android:label="5x1 Widget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="PREPARED"/>
-                <action android:name="PLAY_STATE_CHANGED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="PREPARED" />
+                <action android:name="PLAY_STATE_CHANGED" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/appwidget_5x1"/>
+                android:resource="@xml/appwidget_5x1" />
         </receiver>
+
+        <receiver
+            android:name=".OnLockBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="OnLockBroadcastReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".OnLockService" ></service>
+        <receiver
+            android:name=".OnLockBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="OnLockBroadcastReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
