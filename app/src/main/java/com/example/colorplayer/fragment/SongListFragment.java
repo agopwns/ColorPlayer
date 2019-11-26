@@ -1,27 +1,20 @@
 package com.example.colorplayer.fragment;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Movie;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.NowPlayingActivity;
 import com.example.colorplayer.adapter.SongAdapter;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Song;
@@ -43,9 +36,13 @@ public class SongListFragment extends Fragment{
 
         try {
             recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_music_list);
-            recyclerView.setHasFixedSize(true);
+//            recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            new loadSongs().execute("");
+
+            // 기존
+//            new loadSongs().execute("");
+            adapter = new SongAdapter((AppCompatActivity) getActivity(), SongLoader.getAllSongs(getActivity())
+                    , false, false);
             recyclerView.setAdapter(adapter);
 
         } catch (Exception e){
@@ -55,21 +52,6 @@ public class SongListFragment extends Fragment{
     }
 
     // TODO : 리로드
-//    private void reloadAdapter() {
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(final Void... unused) {
-//                List<Song> songList = SongLoader.getAllSongs(getActivity());
-//                adapter.updateDataSet(songList);
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                adapter.notifyDataSetChanged();
-//            }
-//        }.execute();
-//    }
 
     private class loadSongs extends AsyncTask<String, Void, String> {
 

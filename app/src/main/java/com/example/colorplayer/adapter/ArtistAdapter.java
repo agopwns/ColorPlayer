@@ -66,9 +66,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistHold
             Glide
                     .with(holder.itemView.getContext())
                     .load(uri)
+                    .placeholder(R.drawable.test)
                     .error(R.drawable.test)
                     .into(holder.albumArt);
-
         }
     }
 

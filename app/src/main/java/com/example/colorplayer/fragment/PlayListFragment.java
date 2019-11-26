@@ -40,32 +40,29 @@ public class PlayListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play_list, container, false);
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_play_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // 기존
         playListDao = PlayListDB.getInstance(getActivity()).playListDao();
-
-        if (getActivity() != null)
-            new loadAlbums().execute("");
-
+//        if (getActivity() != null)
+//            new loadAlbums().execute("");
+        mAdapter = new PlayListAdapter(getActivity(), playListDao.getPlayList());
+        recyclerView.setAdapter(mAdapter);
         return view;
     }
 
     private class loadAlbums extends AsyncTask<String, Void, String> {
-
         @Override
         protected String doInBackground(String... params) {
             if (getActivity() != null)
                 mAdapter = new PlayListAdapter(getActivity(), playListDao.getPlayList());
             return "Executed";
         }
-
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
             //to add spacing between cards
         }
-
         @Override
         protected void onPreExecute() {
         }

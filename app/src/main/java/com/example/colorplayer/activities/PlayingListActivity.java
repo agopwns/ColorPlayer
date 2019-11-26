@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 public class PlayingListActivity extends AppCompatActivity {
 
-
     ImageButton backButton;
     TextView textViewCurrentCount, textViewTotalCount;
     RecyclerView recyclerView;
@@ -49,12 +48,20 @@ public class PlayingListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // 변경
+        adapter = new SongAdapter(PlayingListActivity.this
+                , AudioApplication.getInstance().getServiceInterface().getPlayingListByCurrentIdList()
+                , false, false);
+        recyclerView.setAdapter(adapter);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        new loadSongs().execute("");
+        // 기존
+//        new loadSongs().execute("");
         textViewCurrentCount.setText("" + (AudioApplication.getInstance().getServiceInterface().getTempCurrentPosition() + 1));
         textViewTotalCount.setText("" + AudioApplication.getInstance().getServiceInterface().getPlayingListCount());
     }

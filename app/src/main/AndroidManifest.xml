@@ -18,9 +18,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activities.SelectSongActivity"></activity>
-        <activity android:name=".activities.MyPlayingListActivity" />
+        <activity android:name=".activities.CustomListActivity" />
         <activity android:name=".activities.PlayingListActivity" />
-        <activity android:name=".activities.NowPlayingActivity" />
+        <activity android:name=".activities.PlayerActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

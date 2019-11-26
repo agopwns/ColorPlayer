@@ -86,6 +86,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemHolder
             Glide
                     .with(holder.itemView.getContext())
                     .load(uri)
+                    .placeholder(mIcons[2])
                     .error(mIcons[2])
                     .into(holder.albumArt);
         }

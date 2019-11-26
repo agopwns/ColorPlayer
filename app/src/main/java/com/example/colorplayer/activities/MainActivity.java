@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         albumArt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
+                Intent moveIntent = new Intent(getApplicationContext(), PlayerActivity.class);
                 moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         nowPlayingCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent moveIntent = new Intent(getApplicationContext(), NowPlayingActivity.class);
+                Intent moveIntent = new Intent(getApplicationContext(), PlayerActivity.class);
                 moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                     startActivity(moveIntent);

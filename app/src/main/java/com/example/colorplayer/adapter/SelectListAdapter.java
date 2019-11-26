@@ -1,24 +1,22 @@
 package com.example.colorplayer.adapter;
 
 import android.content.ContentUris;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.NowPlayingActivity;
 import com.example.colorplayer.callback.SongEventListener;
+import com.example.colorplayer.model.MiniSong;
 import com.example.colorplayer.model.Song;
 
 import java.util.ArrayList;
@@ -28,8 +26,9 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
 
     public int currentlyPlayingPosition;
     private List<Song> arraylist;
-    public List<Song> returnList;
+    public List<MiniSong> returnList = new ArrayList<>();
     private AppCompatActivity mContext;
+    private boolean isSelectedAll;
     private long[] songIDs;
     private boolean isPlaylist;
     private boolean animate;
@@ -69,20 +68,36 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
                 .error(R.drawable.test)
                 .into(holder.albumArt);
 
-            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            if (!isSelectedAll)
+                holder.checkBox.setChecked(false);
+            else
+                holder.checkBox.setChecked(true);
+
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    CheckBox checkBox = (CheckBox) v;
-                    if(!checkBox.isChecked()){
-                        checkBox.setChecked(true);
-                        returnList.add(song);
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    CheckBox checkBox = (CheckBox) buttonView;
+                    if(checkBox.isChecked()){
+                        MiniSong miniSong = new MiniSong(song.id, song.title, position);
+                        returnList.add(miniSong);
                     } else {
-                        checkBox.setChecked(false);
-                        returnList.remove(position);
+                        for(int i = 0; i < returnList.size(); i++){
+                            if(returnList.get(i).position == position)
+                                returnList.remove(i);
+                        }
                     }
                 }
             });
         }
+    }
+
+    public void selectAll(){
+        isSelectedAll=true;
+        notifyDataSetChanged();
+    }
+    public void unselectall(){
+        isSelectedAll=false;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -112,13 +127,11 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
 
         @Override
         public void onClick(View v) {
-
             if(!checkBox.isChecked()){
                 checkBox.setChecked(true);
             } else {
                 checkBox.setChecked(false);
             }
-
         }
     }
 
@@ -130,15 +143,12 @@ public class SelectListAdapter extends RecyclerView.Adapter<SelectListAdapter.So
         return ret;
     }
 
-    private ArrayList<Long> getSongIdsList() {
+    public ArrayList<Long> getSongIdsList() {
         ArrayList<Long> ret = new ArrayList<Long>();
-        for (int i = 0; i < getItemCount(); i++) {
-            ret.add(arraylist.get(i).id);
+        for (int i = 0; i < returnList.size(); i++) {
+            ret.add(returnList.get(i).id);
         }
         return ret;
     }
-
-
-
 
 }

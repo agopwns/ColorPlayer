@@ -56,8 +56,17 @@ public class FolderListFragment extends Fragment/* implements StorageSelectDialo
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (getActivity() != null)
-            new loadFolders().execute("");
+        // 기존
+//        if (getActivity() != null)
+//            new loadFolders().execute("");
+
+        // 변경
+        String json = mPreferences.getString(mPreferences.FOLDER_LIST);
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<File>>(){}.getType();
+        ArrayList<File> folderPathList = gson.fromJson(json, type);
+        mAdapter = new FolderAdapter(getActivity(), folderPathList);
+        recyclerView.setAdapter(mAdapter);
         return rootView;
     }
 

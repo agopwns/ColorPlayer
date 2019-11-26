@@ -44,13 +44,15 @@ public class ArtistListFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_artist_list);
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // 기존
+//        if (getActivity() != null)
+//            new loadArtists().execute("");
+
+        // 변경
+        mAdapter = new ArtistAdapter(getActivity(), ArtistLoader.getAllArtists(getActivity()));
         recyclerView.setAdapter(mAdapter);
-
-        Log.d("Frag", "ArtistFragment");
-        if (getActivity() != null)
-            new loadArtists().execute("");
         return view;
-
     }
 
     private class loadArtists extends AsyncTask<String, Void, String> {

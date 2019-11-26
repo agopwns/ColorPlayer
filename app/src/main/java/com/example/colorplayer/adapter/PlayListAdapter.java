@@ -1,9 +1,7 @@
 package com.example.colorplayer.adapter;
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.MyPlayingListActivity;
-import com.example.colorplayer.activities.PlayingListActivity;
-import com.example.colorplayer.dataloader.SongLoader;
+import com.example.colorplayer.activities.CustomListActivity;
 import com.example.colorplayer.db.PlayListDB;
 import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.model.PlayList;
@@ -29,6 +25,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.colorplayer.utils.IntentActions.PLAY_LIST_ID;
 
 public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayListHolder> {
 
@@ -53,16 +51,31 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayLi
         if(item!=null){
             holder.title.setText(item.getTitle());
             // TODO : 리스트 개수 파싱 필요
-            holder.listCount.setText(item.getSongIdList());
+            Gson gson = new Gson();
+            String json = item.getSongIdList();
+            Type listType = new TypeToken<ArrayList<String>>() {
+            }.getType();
+            List<String> temp = gson.fromJson(json, listType);
+
+            // List<String> -> List<long>
+            ArrayList<Long> songIdList = new ArrayList<>();
+            // 기존 곡 추가
+            if (temp != null) {
+                for (int i = 0; i < temp.size(); i++) {
+                    songIdList.add(Long.parseLong(temp.get(i)));
+                }
+            }
+
+            holder.listCount.setText("" + songIdList.size());
 
             // 배경 api 혹은 url 로드 추가
             // 앨범 이미지 로드
-//            Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), item.id);
-//            Glide
-//                    .with(holder.itemView.getContext())
-//                    .load(uri)
-//                    .error(R.drawable.test)
-//                    .into(holder.backgroudImage);
+//            Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), item.);
+            Glide
+                    .with(holder.itemView.getContext())
+                    .load(R.drawable.play_list_background1)
+                    .error(R.drawable.test)
+                    .into(holder.backgroudImage);
         }
     }
 
@@ -90,10 +103,10 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayLi
 
         @Override
         public void onClick(View v) {
-            Intent moveIntent = new Intent(mContext.getApplicationContext(), MyPlayingListActivity.class);
+            Intent moveIntent = new Intent(mContext.getApplicationContext(), CustomListActivity.class);
             try {
                 // 1. 현재 재생 목록 id 에 해당하는 곡 리스트 DB 에서 가져오기
-                int id = (int) arraylist.get(getAdapterPosition()).getId(); // 현재 앨범의 albumId
+                int id = (int) arraylist.get(getAdapterPosition()).getId();
                 PlayList list = new PlayList();
                 playListDao = PlayListDB.getInstance(mContext).playListDao();
                 list = playListDao.getPlayListById(id);
@@ -122,6 +135,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayLi
             } catch(Exception e){
                 Log.d("PlayListHolder", "onClick 에러 발생 : " + e);
             }
+            moveIntent.putExtra(PLAY_LIST_ID, arraylist.get(getAdapterPosition()).getId());
             moveIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
             if(AudioApplication.getInstance().getServiceInterface().getPreparedState())
                 mContext.startActivity(moveIntent);

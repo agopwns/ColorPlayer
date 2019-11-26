@@ -1,11 +1,8 @@
 package com.example.colorplayer.adapter;
 
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.NowPlayingActivity;
+import com.example.colorplayer.activities.PlayerActivity;
 import com.example.colorplayer.callback.SongEventListener;
 import com.example.colorplayer.model.Song;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
@@ -98,7 +92,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
         @Override
         public void onClick(View v) {
-            Intent moveIntent = new Intent(mContext.getApplicationContext(), NowPlayingActivity.class);
+            Intent moveIntent = new Intent(mContext.getApplicationContext(), PlayerActivity.class);
 
             // 재생 목록 세팅
             // 랜덤 셔플이 다시 덮어씌워지지 않도록 방지하기 위한 Service 내부에 처리 되어 있음

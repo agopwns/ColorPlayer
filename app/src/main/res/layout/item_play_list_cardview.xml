@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.8"
             android:scaleType="centerCrop"
-            android:src="@drawable/play_list_background1" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"

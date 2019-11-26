@@ -28,7 +28,7 @@ import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 
-public class NowPlayingActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity {
 
     ImageButton backButton, optionButton,
             repeatButton, prevButton, playButton, nextButton, shuffleButton,

@@ -2,7 +2,6 @@ package com.example.colorplayer.adapter;
 
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -17,13 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.NowPlayingActivity;
 import com.example.colorplayer.activities.PlayingListActivity;
-import com.example.colorplayer.callback.SongEventListener;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.model.Album;
 import com.example.colorplayer.model.Song;
-import com.example.colorplayer.utils.PreferencesUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +58,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
             Glide
                     .with(holder.itemView.getContext())
                     .load(uri)
+                    .placeholder(R.drawable.test)
                     .error(R.drawable.test)
                     .into(holder.albumArt);
         }
