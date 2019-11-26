@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LockScreenActivity">
+    tools:context=".activities.LockScreenActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         <LinearLayout
             android:id="@+id/status_area"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="653dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
@@ -30,7 +30,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:layout_marginRight="10dp"
+                android:layout_marginTop="180dp"
                 android:layout_marginBottom="20dp"
                 android:src="@drawable/ic_whatshot_24px_white" />
 
@@ -38,42 +38,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:layout_marginRight="17dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
 
                 <TextView
-                    android:id="@+id/widget_artist"
+                    android:id="@+id/lock_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:maxWidth="120dp"
-                    android:text="Artist"
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="-"
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/widget_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:maxWidth="200dp"
-                    android:maxLines="2"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:maxWidth="300dp"
+                    android:singleLine="true"
                     android:text="Sample Title"
                     android:textColor="@android:color/white"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lock_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxWidth="250dp"
+                    android:maxLines="1"
+                    android:text="Artist"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp" />
 
             </LinearLayout>
 
@@ -82,38 +75,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/widget_btn_rewind"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginRight="20dp"
+                    android:id="@+id/lock_btn_rewind"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_margin="10dp"
                     android:background="@null"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/baseline_keyboard_arrow_left_white_24" />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_keyboard_arrow_left_24px_wthie" />
 
                 <ImageButton
-                    android:id="@+id/widget_btn_play_pause"
+                    android:id="@+id/lock_btn_play_pause"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_margin="10dp"
                     android:background="@null"
                     android:scaleType="centerInside"
                     android:src="@drawable/baseline_play_arrow_white_36" />
 
                 <ImageButton
-                    android:id="@+id/widget_btn_forward"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginRight="20dp"
+                    android:id="@+id/lock_btn_forward"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_margin="10dp"
                     android:background="@null"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/baseline_keyboard_arrow_right_white_24" />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_keyboard_arrow_right_24px_white" />
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="120dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="오른쪽으로 밀어서 잠금을 해제하세요."
+                android:textColor="@android:color/white"
+                android:textSize="16dp" />
 
 
         </LinearLayout>

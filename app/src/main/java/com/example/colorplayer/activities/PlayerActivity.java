@@ -59,8 +59,10 @@ public class PlayerActivity extends AppCompatActivity {
 
         registerBroadcast();
 
+        // dao 연결
         dao = SongInfoDB.getInstance(this).songInfoDao();
 
+        // width 보다 길 경우 텍스트 움직임 설정을 위해
         title.setSelected(true);
 
         // 재생 and 일시정지

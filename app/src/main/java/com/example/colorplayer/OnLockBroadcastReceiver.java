@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.colorplayer.activities.LockScreenActivity;
+
 public class OnLockBroadcastReceiver extends BroadcastReceiver {
 
     @Override
