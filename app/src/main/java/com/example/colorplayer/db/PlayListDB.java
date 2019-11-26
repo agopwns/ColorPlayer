@@ -10,7 +10,7 @@ import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.model.SongInfo;
 
 
-@Database(entities = PlayList.class, version = 1)
+@Database(entities = PlayList.class, version = 1, exportSchema = false)
 public abstract class PlayListDB extends RoomDatabase {
 
     public abstract PlayListDao playListDao();

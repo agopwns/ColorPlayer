@@ -206,7 +206,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
 
             case R.id.icon_search:
+                break;
             case R.id.icon_option:
+                break;
             case R.id.icon_add :
                 createPlayList(getWindowManager().getDefaultDisplay());
                 break;
@@ -251,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 PlayList playList = new PlayList();
                 playList.setTitle(result);
                 playListDao.insertPlayList(playList);
+                sendBroadcast(new Intent(BroadcastActions.PLAY_LIST_ADD));
                 Toast.makeText(getApplicationContext(), "\"" +  message.getText().toString() + "\" 으로 재생 목록을 만들었습니다.", Toast.LENGTH_SHORT).show();
                 // 커스텀 다이얼로그를 종료한다.
                 dlg.dismiss();

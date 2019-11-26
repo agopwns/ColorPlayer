@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <permission android:name="com.leeds.example.broadcast.permission.ACTION_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.leeds.example.broadcast.permission.ACTION_PERMISSION" />
+    <permission android:name="com.leeds.example.broadcast.permission.ACTION_ANOTHER" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.leeds.example.broadcast.permission.ACTION_ANOTHER" />
+
     <application
         android:name=".AudioApplication"
         android:allowBackup="true"
@@ -42,6 +47,20 @@
                 <action android:name="COLLAPSE" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".MyAppWidgetProvider"
+            android:label="5x1 Widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="PREPARED"/>
+                <action android:name="PLAY_STATE_CHANGED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_5x1"/>
+        </receiver>
     </application>
 
 </manifest>

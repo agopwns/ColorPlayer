@@ -26,14 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.colorplayer.utils.IntentActions.PLAY_LIST_ID;
+import static com.example.colorplayer.utils.IntentActions.PLAY_LIST_TITLE;
 
 public class CustomListActivity extends AppCompatActivity {
 
     ImageButton backButton, addButton;
-    TextView textViewCurrentCount, textViewTotalCount;
+    TextView textViewCurrentCount, textViewPageTitle;
     RecyclerView recyclerView;
     private SongAdapter adapter;
     Long mId;
+    String mTitle;
     PlayListDao playListDao;
 
     @Override
@@ -43,9 +45,11 @@ public class CustomListActivity extends AppCompatActivity {
 
         if(getIntent().getExtras() != null){
             mId = getIntent().getExtras().getLong(PLAY_LIST_ID);
+            mTitle = getIntent().getExtras().getString(PLAY_LIST_TITLE);
         }
         playListDao = PlayListDB.getInstance(this).playListDao();
 
+        textViewPageTitle = findViewById(R.id.tv_page_title);
         textViewCurrentCount = findViewById(R.id.tv_current_count);
 
         recyclerView = findViewById(R.id.recyclerView_playing_list);
@@ -72,7 +76,10 @@ public class CustomListActivity extends AppCompatActivity {
             }
         });
 
-        loadSongs(this != null);
+        if(mTitle != null && !mTitle.equals(""))
+            textViewPageTitle.setText(mTitle);
+
+
     }
 
     private void loadSongs(boolean b) {
@@ -106,11 +113,7 @@ public class CustomListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 기존
-        //new loadSongs().execute("");
-        // TODO : 곡 개수에 맞게 변경 필요
-        //textViewCurrentCount.setText("" + (AudioApplication.getInstance().getServiceInterface().getTempCurrentPosition() + 1));
-        //textViewTotalCount.setText("" + AudioApplication.getInstance().getServiceInterface().getPlayingListCount());
+        loadSongs(this != null);
     }
 
     private class loadSongs extends AsyncTask<String, Void, String> {
