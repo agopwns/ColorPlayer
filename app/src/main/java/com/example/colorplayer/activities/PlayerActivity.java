@@ -49,7 +49,6 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_now_playing);
 
         // 음악 재생은 AudioApplication 의 서비스로 작동
-        // TODO : foreground 도 작성해야 앱이 꺼져도 살아있음
         albumArt = findViewById(R.id.album_art);
         title = findViewById(R.id.music_title);
         artist = findViewById(R.id.artist_name);
@@ -234,6 +233,7 @@ public class PlayerActivity extends AppCompatActivity {
                 } else {
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
                 }
+                Log.d("PlayerActivity", "updateUI()");
             }
         }
     }
@@ -253,11 +253,12 @@ public class PlayerActivity extends AppCompatActivity {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
             if(playButton != null){
-                if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
+//                if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
-                }else{
-                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
-                }
+//                }else{
+//                    playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+//                }
+                Log.d("PlayerActivity", "updateUINextSong()");
             }
             // 좋아요 버튼
             if(favoriteButton != null && song != null){
@@ -301,6 +302,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }else{
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
                 }
+                Log.d("PlayerActivity", "updateUINextSongWhenStop()");
             }
             // 좋아요 버튼
             if(favoriteButton != null && song != null){
@@ -337,6 +339,7 @@ public class PlayerActivity extends AppCompatActivity {
 
             if(playButton != null)
                 playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
+            Log.d("PlayerActivity", "updateUIEndToFirst()");
 
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
 
