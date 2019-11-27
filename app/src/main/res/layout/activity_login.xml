@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="회원가입"
+            android:text="로그인"
             android:textColor="@color/colorWhite"
             android:textSize="22dp"
             android:textStyle="bold" />
@@ -60,7 +60,7 @@
             android:theme="@style/TextLabel">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_id"
+                android:id="@+id/login_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -79,7 +79,7 @@
             android:theme="@style/TextLabel">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_password1"
+                android:id="@+id/login_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -100,17 +100,6 @@
             android:theme="@style/TextLabel"
             android:textColorHint="@color/colorWhite"
             >
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_password2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:hint="비밀번호 확인"
-                android:textSize="18dp"
-                android:maxLength="16"
-                android:textColor="@color/colorWhite"
-                android:inputType="textPassword"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

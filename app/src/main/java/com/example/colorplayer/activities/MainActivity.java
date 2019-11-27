@@ -14,6 +14,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -142,14 +143,18 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 // 뷰페이저 선택된 포지션 쉐어드 저장
                 mPreferences.setString(mPreferences.VIEW_PAGER_POSITION, "" + position);
-                if(position == 4){
-                    // 재생목록 탭일시 add 아이콘 필요하므로 메뉴 xml 변경
+                if(pagePosition == 4){
                     tb.getMenu().clear();
                     tb.inflateMenu(R.menu.menu_play_list);
-                } else {
+                }
+                else{
                     tb.getMenu().clear();
                     tb.inflateMenu(R.menu.menu);
                 }
+//                if(pagePosition == 4)
+//                    tb.getMenu().getItem(1).setEnabled(true);
+//                else
+//                    tb.getMenu().getItem(1).setEnabled(false);
                 pagePosition = position;
             }
             @Override
@@ -172,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateUI();
+
+        // 현재 로그인 페이지에서 넘어올 때 id 값이 있으면 로그인 성공 메시지를 띄워줌
+        if(getIntent().getExtras() != null
+        && !getIntent().getExtras().getString("id").equals("")){
+            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+            // 메뉴에서
+        }
     }
 
     @Override
@@ -203,11 +215,28 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         if(pagePosition == 4)
+            //menu.getItem(1).setEnabled(true);
             inflater.inflate(R.menu.menu_play_list, menu);
         else
+            //menu.getItem(1).setEnabled(false);
             inflater.inflate(R.menu.menu, menu);
         return true;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.d("test", "onPrepareOptionsMenu - 옵션메뉴가 " +
+                "화면에 보여질때 마다 호출됨");
+        if(mPreferences.isLoginStatus()){ // 로그인 한 상태: 로그인은 안보이게, 로그아웃은 보이게
+            menu.getItem(4).setEnabled(true);
+            menu.getItem(3).setEnabled(false);
+        }else{ // 로그 아웃 한 상태 : 로그인 보이게, 로그아웃은 안보이게
+            menu.getItem(3).setEnabled(true);
+            menu.getItem(4).setEnabled(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -219,8 +248,17 @@ public class MainActivity extends AppCompatActivity {
                 createPlayList(getWindowManager().getDefaultDisplay());
                 break;
             case R.id.menu_register :
-                Intent moveIntent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(moveIntent);
+                Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(registerIntent);
+                break;
+            case R.id.menu_login :
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                break;
+            case R.id.menu_logout :
+                mPreferences.setLoginStatus(false);
+                Toast.makeText(getApplicationContext(), "로그아웃 하였습니다."
+                                        , Toast.LENGTH_SHORT ).show();
                 break;
 
         }

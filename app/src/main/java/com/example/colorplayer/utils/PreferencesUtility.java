@@ -68,6 +68,10 @@ public final class PreferencesUtility {
     public static final String FOLDER_LIST = "FOLDER_LIST";
     public static final String VIEW_PAGER_POSITION = "VIEW_PAGER_POSITION";
 
+    // 회원 정보
+    public static final String LOGIN_ID = "LOGIN_ID";
+    public static final String IS_LOGIN = "IS_LOGIN";
+
     private static PreferencesUtility sInstance;
 
     private static SharedPreferences mPreferences;
@@ -89,6 +93,16 @@ public final class PreferencesUtility {
 
     public void setOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         mPreferences.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    public boolean isLoginStatus() {
+        return mPreferences.getBoolean(IS_LOGIN, false);
+    }
+
+    public void setLoginStatus(final boolean b) {
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putBoolean(IS_LOGIN, b);
+        editor.apply();
     }
 
     public void setString(String key, String value){

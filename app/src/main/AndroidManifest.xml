@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.RegisterActivity"></activity>
+        <activity android:name=".activities.LoginActivity"></activity>
+        <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.LockScreenActivity" />
         <activity android:name=".activities.SelectSongActivity" />
         <activity android:name=".activities.CustomListActivity" />
