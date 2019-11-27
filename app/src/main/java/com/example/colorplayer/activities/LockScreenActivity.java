@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,17 +23,41 @@ import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.utils.Time;
 
-public class LockScreenActivity extends AppCompatActivity {
+import me.imid.swipebacklayout.lib.SwipeBackLayout;
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
+public class LockScreenActivity extends SwipeBackActivity {
     ImageButton prevButton, playButton, nextButton;
     TextView title, artist;
     Song song;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_screen);
 
+        SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
+        swipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
 
+        swipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
+            @Override
+            public void onScrollStateChange(int state, float scrollPercent) {
+                // 스크롤 될 때
+            }
+
+            @Override
+            public void onEdgeTouch(int edgeFlag) {
+                // 설정된 모서리를 터치 했을 때
+            }
+            @Override
+            public void onScrollOverThreshold() {
+                // 창이 닫힐 정도로 스와이프 되었을 때
+                finish();
+            }
+        });
 
         // 풀 스크린
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -50,8 +75,8 @@ public class LockScreenActivity extends AppCompatActivity {
         registerBroadcast();
 
         // 액티비티 생성시 현재 플레이 중인 곡 데이터 바인딩
-        title = findViewById(R.id.lock_title);
-        artist = findViewById(R.id.lock_artist);
+        title = (TextView)findViewById(R.id.lock_title);
+        artist = (TextView)findViewById(R.id.lock_artist);
 
         // 현재 재생 중인 곡 정보 있을 시 업데이트
         song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
@@ -63,7 +88,7 @@ public class LockScreenActivity extends AppCompatActivity {
         }
 
         // 재생 and 일시정지
-        playButton = findViewById(R.id.lock_btn_play_pause);
+        playButton = (ImageButton)findViewById(R.id.lock_btn_play_pause);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +102,7 @@ public class LockScreenActivity extends AppCompatActivity {
         });
 
         // 이전 곡 재생
-        prevButton = findViewById(R.id.lock_btn_rewind);
+        prevButton = (ImageButton)findViewById(R.id.lock_btn_rewind);
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +112,7 @@ public class LockScreenActivity extends AppCompatActivity {
         });
 
         // 다음 곡 재생
-        nextButton = findViewById(R.id.lock_btn_forward);
+        nextButton = (ImageButton)findViewById(R.id.lock_btn_forward);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

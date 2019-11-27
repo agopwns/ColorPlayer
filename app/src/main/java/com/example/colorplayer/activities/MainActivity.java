@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView albumArt;
     TextView title, artist;
     LinearLayout nowPlayingCard;
-    ImageButton playButton, searchButton, optionButton;
+    ImageButton playButton, searchButton, registerButton, loginButton;
     Song song;
     SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
     private PreferencesUtility mPreferences;
@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         nowPlayingCard = findViewById(R.id.content);
 
         searchButton = findViewById(R.id.icon_search);
-        optionButton = findViewById(R.id.icon_option);
+        registerButton = findViewById(R.id.menu_register);
+        loginButton = findViewById(R.id.menu_login);
 
         albumArt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,11 +215,14 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.icon_search:
                 break;
-            case R.id.icon_option:
-                break;
             case R.id.icon_add :
                 createPlayList(getWindowManager().getDefaultDisplay());
                 break;
+            case R.id.menu_register :
+                Intent moveIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(moveIntent);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

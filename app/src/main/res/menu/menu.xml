@@ -8,9 +8,11 @@
         android:id="@+id/icon_search"
         app:showAsAction="always"/>
 
-    <item
-        android:title="Option"
-        android:icon="@drawable/baseline_more_vert_white_24dp"
-        android:id="@+id/icon_option"
-        app:showAsAction="always"/>
+    <item android:id="@+id/menu_register"
+        android:title="회원가입"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_login"
+        android:title="로그인"
+        app:showAsAction="never" />
 </menu>

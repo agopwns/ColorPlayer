@@ -35,12 +35,18 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.github.liuguangqiang.swipeback:library:1.0.2@aar'
+    implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
+
     annotationProcessor 'androidx.annotation:annotation:1.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    def retrofit_version = "2.6.2"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"     // Gson 처리시
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"  // String 처리시
 
 
     def room_version = "2.2.1"

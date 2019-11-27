@@ -6,6 +6,7 @@
     <color name="colorBackgroundRed">#FF6357</color>
     <color name="colorMildYellow">#FFC107</color>
     <color name="colorRedOrange">#F44336</color>
+    <color name="colorMildBlue">#03A9F4</color>
     <color name="colorOpacity0">#00FFFFFF</color>
     <color name="colorOpacity5">#0DFFFFFF</color>
     <color name="colorOpacity10">#1AFFFFFF</color>

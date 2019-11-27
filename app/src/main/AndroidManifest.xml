@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".AudioApplication"
@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.LockScreenActivity"></activity>
+        <activity android:name=".activities.RegisterActivity"></activity>
+        <activity android:name=".activities.LockScreenActivity" />
         <activity android:name=".activities.SelectSongActivity" />
         <activity android:name=".activities.CustomListActivity" />
         <activity android:name=".activities.PlayingListActivity" />
@@ -59,6 +60,18 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_5x1" />
         </receiver>
+        <receiver
+            android:name=".OnLockBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="OnLockBroadcastReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".OnLockService" />
 
         <receiver
             android:name=".OnLockBroadcastReceiver"
@@ -67,22 +80,9 @@
             android:label="OnLockBroadcastReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".OnLockService" ></service>
-        <receiver
-            android:name=".OnLockBroadcastReceiver"
-            android:enabled="true"
-            android:exported="false"
-            android:label="OnLockBroadcastReceiver"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>
