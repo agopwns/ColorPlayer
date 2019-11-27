@@ -66,6 +66,7 @@ public class AudioService extends Service {
             public void onPrepared(MediaPlayer mp) {
                 isPrepared = true;
                 mp.start();
+                Log.d("AudioService", "노래재생 prepared");
                 // 준비 상태를 NowPlayingActivity 에 알리기 위함
                 sendBroadcast(new Intent(BroadcastActions.PREPARED));
 
@@ -100,6 +101,7 @@ public class AudioService extends Service {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 isPrepared = false;
+                Log.d("AudioService", "노래재생 setOnCompletionListener");
                 // 재생 상태 변경을 알려서 NowPlayingActivity 에서 UI 업데이트를 하기 위함
                 forward();
                 updateNotificationPlayer();
@@ -109,6 +111,7 @@ public class AudioService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 isPrepared = false;
+                Log.d("AudioService", "노래재생 setOnErrorListener");
                 // Warning : 곡이 준비되고 재생되는 것보다 빠르게 getPosition, getDuration 을
                 // 사용하려고 할 경우 오류 발생함.
                 // 에러시 다음 곡을 넘어가는 것을 방지하기 위해 다시 재생
@@ -348,6 +351,7 @@ public class AudioService extends Service {
             mMediaPlayer.setDataSource(getApplicationContext(), uri);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.prepareAsync();
+            Log.d("AudioService", "노래재생 prepareAsync");
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("AudioService", "prepare 에러 발생 : " + e);
@@ -464,10 +468,11 @@ public class AudioService extends Service {
     }
 
     public long getPosition() {
-        if(isPlaying())
+//        if(isPlaying())
+        Log.d("AudioService", "노래재생 getPosition()");
             return mMediaPlayer.getCurrentPosition();
-        else
-            return 0;
+//        else
+//            return 0;
     }
 
     public long getPositionWhenStopped() {
@@ -478,10 +483,11 @@ public class AudioService extends Service {
     }
 
     public long getDuration() {
-        if(isPlaying())
+//        if(isPlaying()){
+            Log.d("AudioService", "노래재생 getDuration()");
             return mMediaPlayer.getDuration();
-        else
-            return 0;
+//        } else
+//            return 0;
     }
 
     public String getRemoteViewSizeState() {

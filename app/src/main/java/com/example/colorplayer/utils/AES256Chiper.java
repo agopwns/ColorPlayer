@@ -30,7 +30,7 @@ public class AES256Chiper {
         cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, newKey, ivSpec);
 
-        return Base64.encodeToString(cipher.doFinal(textBytes), 0);
+        return Base64.encodeToString(cipher.doFinal(textBytes), Base64.NO_WRAP);
     }
 
     //AES256 복호화

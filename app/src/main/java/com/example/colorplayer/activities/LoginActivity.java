@@ -24,9 +24,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -75,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : 회원 가입을 위한 확인
+
                 // 1. 아이디 체크
                 mId = textId.getText().toString();
                 mPass = textPass1.getText().toString();
@@ -97,22 +101,27 @@ public class LoginActivity extends AppCompatActivity {
                             isExistId = true;
 
                             String json = response.body().toString();
-                            Gson gson = new Gson();
-                            json = json.replace("\n", "");
+                            // 비밀 번호 꺼내기
+                            // 원래 이렇게 하면 안되지만 특수 문자로 인해 json 파싱이 어려워
+                            // 임시방편으로 이렇게 처리
 
+                            // 1. password= 찾기
+                            String temp = json.split("password=")[1];
 
+                            // 2. temp 에서 } 가 나오는 길이까지 문자열 자르기
+                            int lastIndex = temp.indexOf("}");
+                            if(lastIndex != -1)
+                                temp = temp.substring(0, lastIndex);
 
-//                            JsonReader reader = new JsonReader(new StringReader(json));
-//                            reader.setLenient(true);
-                            json = json.trim();
-
-                            Example data = gson.fromJson(json, Example.class);
-                            Log.d("RegisterActivity", "파싱 성공 발생 : " + data.getItem().getId());
-                            String password = data.getItem().getPassword();
+//                            Gson gson = new Gson();
+//                            json = URLDecoder.decode(json);
+//                            Example data = gson.fromJson(json, Example.class);
+//                            Log.d("RegisterActivity", "파싱 성공 발생 : " + data.getItem().getId());
+//                            String password = data.getItem().getPassword();
                             String realPass = "";
                             // 복호화
                             try {
-                                realPass = AES256Chiper.AES_Decode(password);
+                                realPass = AES256Chiper.AES_Decode(temp);
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             } catch (NoSuchAlgorithmException e) {
@@ -127,6 +136,8 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             } catch (BadPaddingException e) {
                                 e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                             if(realPass.equals(""))
                                 Log.d("RegisterActivity", "복호화 실패 발생");
@@ -134,14 +145,10 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("RegisterActivity", "복호화 성공 발생");
 
                             // 패스워드 검사
-                            if(mPass != null && !mPass.equals("") && mPass.equals(realPass)){
+                            if(mPass != null && !realPass.equals("") && mPass.equals(realPass)){
                                 isEqualPassword = true;
-//                                Toast.makeText(getApplicationContext(), "비번 같음"
-//                                        , Toast.LENGTH_SHORT ).show();
                             } else {
                                 isEqualPassword = false;
-//                                Toast.makeText(getApplicationContext(), "비번 다름"
-//                                        , Toast.LENGTH_SHORT ).show();
                                 textPass1.setError("비밀 번호가 다릅니다.");
                             }
 
@@ -161,6 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                             moveIntent.putExtra("id", mId);
                             moveIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             startActivity(moveIntent);
+                            finish();
                         }
                     }
 

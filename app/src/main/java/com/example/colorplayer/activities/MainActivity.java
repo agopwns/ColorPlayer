@@ -197,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         TextView txt_name = (TextView) tabView.findViewById(R.id.txt_name);
         txt_name.setText(tabName);
         return tabView;
-
     }
+
     public void setupViewPager(ViewPager viewPager, int position) {
         adapter.addFragment(new SongListFragment(), "노래");
         adapter.addFragment(new AlbumListFragment(), "앨범");

@@ -182,6 +182,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
+
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
         updateUINextSong();
     }
@@ -252,7 +253,9 @@ public class PlayerActivity extends AppCompatActivity {
     private void updateUINextSong() {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+
             if(playButton != null){
+                Log.d("PlayerActivity", "노래재생 updateUINextSong()");
 //                if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
                     playButton.setImageResource(R.drawable.baseline_pause_white_36);
 //                }else{
@@ -390,30 +393,33 @@ public class PlayerActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-
-            long position = AudioApplication.getInstance().getServiceInterface().getPosition();
-            long maxDuration = AudioApplication.getInstance().getServiceInterface().getDuration();
-
-            if (seekBar != null && maxDuration != 0) {
-
-                seekBar.setMax((int)maxDuration);
-                seekBar.setProgress((int) position);
-
-                totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
-
-                if (duration != null && this != null && position / 1000 <= maxDuration / 1000)
-                    duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
-            }
-            overflowcounter--;
-            // 서비스가 준비됬는지를 꼼꼼히 확인하면
-            // 딜레이를 높게 잡지 않아도 된다.
-            int delay = 10;
-            if (overflowcounter < 0 && !isActivityPaused) {
-                overflowcounter++;
-                seekBar.postDelayed(mUpdateProgress, delay);
-            }
+            setPlayInfo();
         }
     };
+
+    private void setPlayInfo() {
+        long position = AudioApplication.getInstance().getServiceInterface().getPosition();
+        long maxDuration = AudioApplication.getInstance().getServiceInterface().getDuration();
+
+        if (seekBar != null && maxDuration != 0) {
+
+            seekBar.setMax((int)maxDuration);
+            seekBar.setProgress((int) position);
+
+            totalTime.setText(Time.makeShortTimeString(getApplication(), maxDuration / 1000));
+
+            if (duration != null && this != null && position / 1000 <= maxDuration / 1000)
+                duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
+        }
+        overflowcounter--;
+        // 서비스가 준비됬는지를 꼼꼼히 확인하면
+        // 딜레이를 높게 잡지 않아도 된다.
+        int delay = 10;
+        if (overflowcounter < 0 && !isActivityPaused) {
+            overflowcounter++;
+            seekBar.postDelayed(mUpdateProgress, delay);
+        }
+    }
 
     // 재생 상태 변경을 받는 브로드캐스트 리시버
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

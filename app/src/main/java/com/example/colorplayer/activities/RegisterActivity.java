@@ -18,6 +18,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -97,12 +99,8 @@ public class RegisterActivity extends AppCompatActivity {
                         // 패스워드 검사
                         if(mPass1 != null && !mPass1.equals("") && mPass1.equals(mPass2)){
                             isEqualPassword = true;
-                            Toast.makeText(getApplicationContext(), "비번 같음"
-                                    , Toast.LENGTH_SHORT ).show();
                         } else {
                             isEqualPassword = false;
-                            Toast.makeText(getApplicationContext(), "비번 다름"
-                                    , Toast.LENGTH_SHORT ).show();
                             textPass2.setError("비밀 번호가 다릅니다.");
                         }
 
@@ -149,9 +147,9 @@ public class RegisterActivity extends AppCompatActivity {
                             }
 
                             System.out.println(test);
-
-                            aesPass = aesPass.replace("==\n","");
-                            aesPass = aesPass.trim();
+                            //aesPass = aesPass.replace("==\n","");
+                            //aesPass = aesPass.replace("\\","");
+                            //aesPass = aesPass.trim();
                             Member member = new Member(mId, aesPass);
                             final Call<Member> res = apiService.postUser(member);
 
