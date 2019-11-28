@@ -15,9 +15,11 @@ import android.widget.TextView;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.R;
 import com.example.colorplayer.adapter.SongAdapter;
+import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.db.PlayListDB;
 import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.model.PlayList;
+import com.example.colorplayer.model.Song;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -98,14 +100,18 @@ public class CustomListActivity extends AppCompatActivity {
                 songIdList.add(Long.parseLong(temp.get(i)));
             }
         }
-        AudioApplication.getInstance().getServiceInterface().setPlayList(songIdList);
-        AudioApplication.getInstance().getServiceInterface().setSongPosition(0);
+
+        // List<Song> 새로 만들기
+        List<Song> newSongList = new ArrayList<>();
+        for(int i = 0; i < songIdList.size(); i++){
+            newSongList.add(SongLoader.getSongForID(getApplicationContext(),songIdList.get(i)));
+        }
 
         textViewCurrentCount.setText("" + songIdList.size());
 
         if (b && songIdList != null)
             adapter = new SongAdapter(CustomListActivity.this
-                    , AudioApplication.getInstance().getServiceInterface().getPlayingListByCurrentIdList()
+                    , newSongList
                     , false, false);
         recyclerView.setAdapter(adapter);
     }

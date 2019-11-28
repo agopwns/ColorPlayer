@@ -35,6 +35,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
+import com.example.colorplayer.AudioServiceInterface;
 import com.example.colorplayer.OnLockService;
 import com.example.colorplayer.db.PlayListDB;
 import com.example.colorplayer.db.PlayListDao;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private int pagePosition = 0;
     private PlayListDao playListDao;
     String result; // 재생 목록 이름
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,25 +173,31 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        Log.d(TAG, "onCreate() 발생");
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume() 발생");
         super.onResume();
         updateUI();
-
+        Log.d(TAG, "onResume() updateUI() 발생");
         // 현재 로그인 페이지에서 넘어올 때 id 값이 있으면 로그인 성공 메시지를 띄워줌
-        if(getIntent().getExtras() != null
-        && !getIntent().getExtras().getString("id").equals("")){
-            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-            // 메뉴에서
+        if(getIntent().getExtras() != null && getIntent().getExtras().getString("id") != null){
+            if(!getIntent().getExtras().getString("id").equals("")){
+                Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+            }
         }
+        Log.d(TAG, "onResume() updateUI() END 발생");
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterBroadcast();
+        Log.d("test", "onDestroy()");
+        AudioApplication.getInstance().getServiceInterface().saveCurSongInfo();
     }
 
     private View createTabView(String tabName) {
@@ -225,8 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.d("test", "onPrepareOptionsMenu - 옵션메뉴가 " +
-                "화면에 보여질때 마다 호출됨");
         if(mPreferences.isLoginStatus()){ // 로그인 한 상태: 로그인은 안보이게, 로그아웃은 보이게
             menu.getItem(4).setEnabled(true);
             menu.getItem(3).setEnabled(false);

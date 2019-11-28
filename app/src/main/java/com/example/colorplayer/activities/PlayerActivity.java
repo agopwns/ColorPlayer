@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -28,6 +29,8 @@ import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 
+import java.util.TimerTask;
+
 public class PlayerActivity extends AppCompatActivity {
 
     ImageButton backButton, optionButton,
@@ -41,6 +44,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
     private int playCount = 0;
+    int mDelay = 100;
 
 
     @Override
@@ -192,7 +196,7 @@ public class PlayerActivity extends AppCompatActivity {
         super.onResume();
         if (seekBar != null){
             isActivityPaused = false;
-            seekBar.postDelayed(mUpdateProgress, 10);
+            seekBar.postDelayed(mUpdateProgress, mDelay);
         }
 
         if(AudioApplication.getInstance().getServiceInterface().getPreparedState()){
@@ -389,6 +393,10 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -414,10 +422,10 @@ public class PlayerActivity extends AppCompatActivity {
         overflowcounter--;
         // 서비스가 준비됬는지를 꼼꼼히 확인하면
         // 딜레이를 높게 잡지 않아도 된다.
-        int delay = 10;
+
         if (overflowcounter < 0 && !isActivityPaused) {
             overflowcounter++;
-            seekBar.postDelayed(mUpdateProgress, delay);
+            seekBar.postDelayed(mUpdateProgress, mDelay);
         }
     }
 

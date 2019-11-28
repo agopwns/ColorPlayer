@@ -17,6 +17,7 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.example.colorplayer.adapter.FolderAdapter;
 import com.example.colorplayer.dataloader.SongLoader;
 import com.example.colorplayer.db.SongInfoDB;
 import com.example.colorplayer.db.SongInfoDao;
@@ -27,7 +28,11 @@ import com.example.colorplayer.utils.CommandActions;
 import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RemoteViewSize;
 import com.example.colorplayer.utils.RepeatActions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -78,6 +83,11 @@ public class AudioService extends Service {
                 if(isFirstPlay){
                     pause();
                     isFirstPlay = false;
+                    // 지난 번에 재생 중이었던 위치로 업데이트
+                    if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
+                        int progress = Integer.parseInt(mPreferences.getString(mPreferences.PLAYING_SEEK));
+                        mMediaPlayer.seekTo(progress);
+                    }
                 } else {
                     // 앱 종료 전 Shared 로 임시 저장한 곡을 제외한
                     // 새로운 곡이 플레이 될 때 재생 카운트 저장
@@ -95,6 +105,9 @@ public class AudioService extends Service {
                         }
                     }
                 }
+                // 처음 시작시 song 세팅 된 후 position 조정
+
+
             }
         });
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -115,7 +128,8 @@ public class AudioService extends Service {
                 // Warning : 곡이 준비되고 재생되는 것보다 빠르게 getPosition, getDuration 을
                 // 사용하려고 할 경우 오류 발생함.
                 // 에러시 다음 곡을 넘어가는 것을 방지하기 위해 다시 재생
-                mCurrentPosition--;
+                if(!isFirstPlay)
+                    mCurrentPosition--;
                 Log.d("AudioService", "setOnErrorListener 에러 발생");
                 updateNotificationPlayer();
                 return false;
@@ -131,16 +145,20 @@ public class AudioService extends Service {
         // 맨 처음 시작시
         mPreferences = PreferencesUtility.getInstance(getApplicationContext());
         if(mPreferences.getPlayingSongId() != 0){
+
+            // 마지막에 재생 중이었던 곡을 바인딩
             song = SongLoader.getSongForID(getApplicationContext(), mPreferences.getPlayingSongId());
-            mAudioIds.add(song.id);
-            setPlayList(mAudioIds);
-//            playWhenAppStart();
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            sendBroadcast(new Intent(BroadcastActions.STOPPED));
+
+            // 저장된 string json 을 파싱하여 재생 리스트에 넣는다
+            String json = mPreferences.getString(PreferencesUtility.PLAYING_SONG_LIST);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Long>>(){}.getType();
+            ArrayList<Long> firstList = gson.fromJson(json, type);
+            mAudioIds = firstList;
+
+            // 저장된 곡의 포지션을 불러와 세팅한다
+            String loadPosition = mPreferences.getString(PreferencesUtility.PLAYING_POSITION);
+            mCurrentPosition =  Integer.parseInt(loadPosition);
         }
     }
 
@@ -154,14 +172,12 @@ public class AudioService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-
         return mBinder;
     }
 
     // RemoteView 를 클릭시 해당 함수를 통해 action 이 들어오고 그에 맞는 서비스 동작을 실행한다
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
 
         if (intent != null) {
             String action = intent.getAction();
@@ -344,10 +360,7 @@ public class AudioService extends Service {
     // mMediaPlayer 준비
     private void prepare() {
         try {
-            // TODO : path 수정
             Uri uri = Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "" + song.id);
-
-            mPreferences.setPlayingSongId(song.id);
             mMediaPlayer.setDataSource(getApplicationContext(), uri);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.prepareAsync();
@@ -362,16 +375,11 @@ public class AudioService extends Service {
     public void play(int position) {
         queryAudioItem(position);
         tempCurrentPosition = position;
-        //sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
         stop();
         prepare();
     }
 
     public void playWhenAppStart() {
-        //queryAudioItem(position);
-        //tempCurrentPosition = position;
-        //sendBroadcast(new Intent(BroadcastActions.PLAY_STATE_CHANGED));
-        //mMediaPlayer.start();
         prepare();
     }
 
@@ -424,17 +432,20 @@ public class AudioService extends Service {
             }
             play(mCurrentPosition);
             sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
+            Log.d("AudioService", "노래재생 REPEAT_ALL forward()");
         }
         else if(repeatState.equals(RepeatActions.REPEAT_ONE)){
             // 아무것도 하지 않음. 포지션의 위치가 바뀌지 않기 때문에 한곡 반복
             play(mCurrentPosition);
             sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
+            Log.d("AudioService", "노래재생 forward()");
         }
         else if(repeatState.equals(RepeatActions.REPEAT_NONE)){
             if (mAudioIds.size() - 1 > mCurrentPosition) {
                 mCurrentPosition++; // 다음 포지션으로 이동.
                 play(mCurrentPosition);
                 sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
+                Log.d("AudioService", "노래재생 REPEAT_ONE forward()");
             } else {
                 mCurrentPosition = 0; // 처음 포지션으로 이동.
                 play(mCurrentPosition);
@@ -445,6 +456,7 @@ public class AudioService extends Service {
                 }
                 sendBroadcast(new Intent(BroadcastActions.PLAY_NEXT_SONG));
                 sendBroadcast(new Intent(BroadcastActions.STOPPED));
+                Log.d("AudioService", "노래재생 REPEAT_ONE forward()");
             }
         }
     }
@@ -468,11 +480,11 @@ public class AudioService extends Service {
     }
 
     public long getPosition() {
-//        if(isPlaying())
-        Log.d("AudioService", "노래재생 getPosition()");
+        if(isPlaying()) {
+            Log.d("AudioService", "노래재생 getPosition()");
             return mMediaPlayer.getCurrentPosition();
-//        else
-//            return 0;
+        } else
+            return 0;
     }
 
     public long getPositionWhenStopped() {
@@ -483,11 +495,11 @@ public class AudioService extends Service {
     }
 
     public long getDuration() {
-//        if(isPlaying()){
-            Log.d("AudioService", "노래재생 getDuration()");
-            return mMediaPlayer.getDuration();
-//        } else
-//            return 0;
+         if(isPlaying()) {
+             Log.d("AudioService", "노래재생 getDuration()");
+             return mMediaPlayer.getDuration();
+         } else
+            return 0;
     }
 
     public String getRemoteViewSizeState() {
@@ -499,6 +511,24 @@ public class AudioService extends Service {
             return mMediaPlayer.getDuration();
         else
             return 0;
+    }
+
+    public void saveCurSongInfo(){
+        // 앱이 종료될 때에 항상 현재 플레이 리스트를 저장
+
+        // 마지막 곡 id 저장
+        mPreferences.setPlayingSongId(song.id);
+
+        // list -> json
+        Gson gson = new Gson();
+        String json = gson.toJson(mAudioIds);
+        mPreferences.setString(PreferencesUtility.PLAYING_SONG_LIST, json);
+
+        // 현재 재생 포지션 저장
+        mPreferences.setString(PreferencesUtility.PLAYING_POSITION, "" + mCurrentPosition);
+
+        // 종료 될 때 현재 재생 seek 저장 (int sec)
+        mPreferences.setString(PreferencesUtility.PLAYING_SEEK, "" + mMediaPlayer.getCurrentPosition());
     }
 
     public void setSeekTo(int progress){

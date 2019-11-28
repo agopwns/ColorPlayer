@@ -196,6 +196,12 @@ public class AudioServiceInterface {
         return 0;
     }
 
+    public void saveCurSongInfo(){
+        if (mService != null) {
+            mService.saveCurSongInfo();
+        }
+    }
+
     public void setSeekTo(int progress){
         if (mService != null) {
             mService.setSeekTo(progress);
@@ -213,5 +219,7 @@ public class AudioServiceInterface {
         else
             return RepeatActions.REPEAT_ALL;
     }
+
+
 
 }
