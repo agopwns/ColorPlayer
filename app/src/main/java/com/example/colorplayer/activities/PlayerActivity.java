@@ -28,17 +28,28 @@ import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.db.SongInfoDB;
 import com.example.colorplayer.db.SongInfoDao;
 import com.example.colorplayer.http.CommentApiService;
-import com.example.colorplayer.http.Member;
-import com.example.colorplayer.http.OpenApiService;
+import com.example.colorplayer.http.Example;
 import com.example.colorplayer.model.Comment;
-import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.model.SongInfo;
+import com.example.colorplayer.utils.AES256Chiper;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.model.Song;
 import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
+import com.google.gson.Gson;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +57,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.colorplayer.utils.urlUtils.AWS_URL;
+import static com.example.colorplayer.utils.urlUtils.AWS_COMMENT_URL;
+import static com.example.colorplayer.utils.urlUtils.AWS_MEMBER_URL;
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -57,6 +69,7 @@ public class PlayerActivity extends AppCompatActivity {
     TextView title, artist, duration, totalTime;
     Song song;
     SeekBar seekBar;
+    String mId;
     private SongInfoDao dao;
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
@@ -88,6 +101,7 @@ public class PlayerActivity extends AppCompatActivity {
         title.setSelected(true);
 
         mPreferences = PreferencesUtility.getInstance(getApplicationContext());
+        mId = mPreferences.getString(PreferencesUtility.LOGIN_ID);
 
         // 재생 and 일시정지
         playButton = findViewById(R.id.button_play);
@@ -220,8 +234,64 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        // 코멘트 로드
+
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
+        // TODO : 서비스에서 로딩하지 않고 인텐트로 바로 전달 받으면 바로 UI 업데이트가 가능
         updateUINextSong();
+
+        // 1. 해당 곡 정보 토대로 코멘트 가져오기
+        // 통신
+        String tempString = "";
+        if(getIntent().getExtras() != null){
+            tempString = getIntent().getExtras().getString("songTitle");
+        }
+        String urlEnc = URLEncoder.encode(tempString);
+
+        Retrofit retrofit =
+                new Retrofit.Builder()
+                        .baseUrl(AWS_COMMENT_URL)
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+        apiService = retrofit.create(CommentApiService.class);
+
+        String reqString = urlEnc + "," + mId;
+        Call<Object> res = apiService.getCommentByTitleId(reqString);
+        res.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.d("RegisterActivity", "통신 성공 발생 : " + response.body().toString());
+                if(!response.body().toString().equals("{}")){
+
+                    String json = response.body().toString();
+
+                    Gson gson = new Gson();
+                    Example data = gson.fromJson(json, Example.class);
+                    Log.d("RegisterActivity", "파싱 성공 발생 : " + data.getItem().getId());
+
+
+                } else {
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "통신 실패 발생", Toast.LENGTH_SHORT ).show();
+                Log.d("RegisterActivity", "통신 실패 발생 : " + t.toString());
+            }
+        });
+
+        // 2. 리스트로 만들기
+
+        // 3. 어떻게 해당 시간의 근처에 맞게 뿌려줄 지 고민하고
+
+        // 4. 그 다음 로직 짜기
+
+        // 5. 핸들러로 바꿔주기
+
+
     }
 
     @Override
@@ -301,18 +371,13 @@ public class PlayerActivity extends AppCompatActivity {
                 String result = message.getText().toString();
                 // 객체 담기
                 Comment comment = new Comment();
-                comment.setId(mPreferences.getString(PreferencesUtility.LOGIN_ID));
+                comment.setId(mId);
                 comment.setTitle(song.title);
                 comment.setArtist(song.artistName);
                 comment.setContent(result);
                 comment.setTime(time.getText().toString());
                 // 통신
-                Retrofit retrofit =
-                        new Retrofit.Builder()
-                                .baseUrl(AWS_URL)
-                                .addConverterFactory(GsonConverterFactory.create()).build();
 
-                apiService = retrofit.create(CommentApiService.class);
 
                 final Call<Comment> res = apiService.postUser(comment);
 

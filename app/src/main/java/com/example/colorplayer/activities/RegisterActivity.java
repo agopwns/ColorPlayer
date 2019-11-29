@@ -10,16 +10,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.colorplayer.R;
-import com.example.colorplayer.http.Example;
 import com.example.colorplayer.http.Member;
 import com.example.colorplayer.http.OpenApiService;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.colorplayer.utils.AES256Chiper.AES_Decode;
 import static com.example.colorplayer.utils.AES256Chiper.AES_Encode;
-import static com.example.colorplayer.utils.urlUtils.AWS_URL;
+import static com.example.colorplayer.utils.urlUtils.AWS_MEMBER_URL;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -75,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 Retrofit retrofit =
                         new Retrofit.Builder()
-                        .baseUrl(AWS_URL)
+                        .baseUrl(AWS_MEMBER_URL)
                         .addConverterFactory(GsonConverterFactory.create()).build();
 
                 apiService = retrofit.create(OpenApiService.class);

@@ -104,6 +104,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             else
                 // 선택한 오디오 재생
                 AudioApplication.getInstance().getServiceInterface().play(getAdapterPosition());
+
+            moveIntent.putExtra("songTitle", getSong(getAdapterPosition()).title);
             mContext.startActivity(moveIntent);
         }
     }
