@@ -7,18 +7,48 @@
     android:background="@color/colorBackgroundRed"
     app:layout_constraintCircleRadius="20dp">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:text="새로운 재생 목록 (16자 이하)"
-        android:background="@color/colorBackgroundRed"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="코멘트 입력"
+            android:background="@color/colorBackgroundRed"/>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="1:30"
+            android:background="@color/colorBackgroundRed"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="(22자 이하)"
+            android:background="@color/colorBackgroundRed"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/message"
@@ -31,7 +61,7 @@
         android:gravity="left"
         android:textSize="16dp"
         android:textColor="@color/colorWhite"
-        android:maxLength="16"/>
+        android:maxLength="22"/>
 
     <LinearLayout
         android:layout_width="180dp"

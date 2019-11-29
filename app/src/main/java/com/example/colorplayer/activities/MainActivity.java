@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
         window.setLayout(x, y);
 
         // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-        final EditText message = (EditText) dlg.findViewById(R.id.mesgase);
+        final EditText message = (EditText) dlg.findViewById(R.id.message);
         final Button okButton = (Button) dlg.findViewById(R.id.okButton);
         final Button cancelButton = (Button) dlg.findViewById(R.id.cancelButton);
 

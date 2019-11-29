@@ -2,16 +2,21 @@ package com.example.colorplayer.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -22,20 +27,32 @@ import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.db.SongInfoDB;
 import com.example.colorplayer.db.SongInfoDao;
+import com.example.colorplayer.http.CommentApiService;
+import com.example.colorplayer.http.Member;
+import com.example.colorplayer.http.OpenApiService;
+import com.example.colorplayer.model.Comment;
+import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
 import com.example.colorplayer.model.Song;
+import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 
-import java.util.TimerTask;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.colorplayer.utils.urlUtils.AWS_URL;
 
 public class PlayerActivity extends AppCompatActivity {
 
     ImageButton backButton, optionButton,
             repeatButton, prevButton, playButton, nextButton, shuffleButton,
-            favoriteButton, playingListButton;
+            favoriteButton, commentButton, playingListButton;
     ImageView albumArt;
     TextView title, artist, duration, totalTime;
     Song song;
@@ -45,12 +62,14 @@ public class PlayerActivity extends AppCompatActivity {
     private boolean isActivityPaused = false;
     private int playCount = 0;
     int mDelay = 100;
+    PreferencesUtility mPreferences;
+    CommentApiService apiService;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_now_playing);
+        setContentView(R.layout.activity_player);
 
         // 음악 재생은 AudioApplication 의 서비스로 작동
         albumArt = findViewById(R.id.album_art);
@@ -67,6 +86,8 @@ public class PlayerActivity extends AppCompatActivity {
 
         // width 보다 길 경우 텍스트 움직임 설정을 위해
         title.setSelected(true);
+
+        mPreferences = PreferencesUtility.getInstance(getApplicationContext());
 
         // 재생 and 일시정지
         playButton = findViewById(R.id.button_play);
@@ -187,6 +208,18 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        // 코멘트 버튼
+        commentButton = findViewById(R.id.button_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 다이얼로그 띄우기
+                createCommentDialog(getWindowManager().getDefaultDisplay());
+                // 코멘트와 노래 정보, 시간초 post
+
+            }
+        });
+
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
         updateUINextSong();
     }
@@ -227,6 +260,90 @@ public class PlayerActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterBroadcast();
+    }
+
+    // 호출할 다이얼로그 함수를 정의한다.
+    public void createCommentDialog(Display display) {
+
+        // 커스텀 다이얼로그를 정의하기위해 Dialog클래스를 생성한다.
+        final Dialog dlg = new Dialog(this);
+
+        // 액티비티의 타이틀바를 숨긴다.
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // 커스텀 다이얼로그의 레이아웃을 설정한다.
+        dlg.setContentView(R.layout.custom_comment_dialog);
+
+        // 커스텀 다이얼로그를 노출한다.
+        dlg.show();
+
+        // 다이얼로그 크기 재설정
+        Point size =new Point();
+        display.getSize(size);
+        Window window = dlg.getWindow();
+        int x = (int)(size.x * 0.9f);
+        int y = (int)(size.y * 0.27f);
+        window.setLayout(x, y);
+
+        // 커스텀 다이얼로그의 각 위젯들을 정의한다.
+        final TextView time = (TextView) dlg.findViewById(R.id.time);
+        final EditText message = (EditText) dlg.findViewById(R.id.message);
+        final Button okButton = (Button) dlg.findViewById(R.id.okButton);
+        final Button cancelButton = (Button) dlg.findViewById(R.id.cancelButton);
+
+        // 시간 저장
+        time.setText(duration.getText());
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // '확인' 버튼 클릭시 저장
+                String result = message.getText().toString();
+                // 객체 담기
+                Comment comment = new Comment();
+                comment.setId(mPreferences.getString(PreferencesUtility.LOGIN_ID));
+                comment.setTitle(song.title);
+                comment.setArtist(song.artistName);
+                comment.setContent(result);
+                comment.setTime(time.getText().toString());
+                // 통신
+                Retrofit retrofit =
+                        new Retrofit.Builder()
+                                .baseUrl(AWS_URL)
+                                .addConverterFactory(GsonConverterFactory.create()).build();
+
+                apiService = retrofit.create(CommentApiService.class);
+
+                final Call<Comment> res = apiService.postUser(comment);
+
+                res.enqueue(new Callback<Comment>() {
+                    @Override
+                    public void onResponse(Call<Comment> call, Response<Comment> response) {
+                        final  Object message = response.body();
+                        Toast.makeText(getApplicationContext(), "서버에 값을 전달했습니다 : ", Toast.LENGTH_SHORT).show();
+
+                    }
+                    @Override
+                    public void onFailure(Call<Comment> call, Throwable t) {
+                        t.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "서버와 통신중 에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                sendBroadcast(new Intent(BroadcastActions.PLAY_LIST_ADD));
+                Toast.makeText(getApplicationContext(), "\"" +  message.getText().toString() + "\" 으로 재생 목록을 만들었습니다.", Toast.LENGTH_SHORT).show();
+                // 커스텀 다이얼로그를 종료한다.
+                dlg.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "취소 했습니다.", Toast.LENGTH_SHORT).show();
+                // 커스텀 다이얼로그를 종료한다.
+                dlg.dismiss();
+            }
+        });
     }
 
     private void updateUI() {
