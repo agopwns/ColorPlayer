@@ -29,6 +29,7 @@ import com.example.colorplayer.db.SongInfoDB;
 import com.example.colorplayer.db.SongInfoDao;
 import com.example.colorplayer.http.CommentApiService;
 import com.example.colorplayer.http.Example;
+import com.example.colorplayer.http.NullOnEmptyConverterFactory;
 import com.example.colorplayer.model.Comment;
 import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.AES256Chiper;
@@ -39,13 +40,17 @@ import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -77,6 +82,8 @@ public class PlayerActivity extends AppCompatActivity {
     int mDelay = 100;
     PreferencesUtility mPreferences;
     CommentApiService apiService;
+    private static String TAG = "PlayerActivity";
+    private List<Comment> mCommentList;
 
 
     @Override
@@ -235,7 +242,7 @@ public class PlayerActivity extends AppCompatActivity {
         });
 
         // 코멘트 로드
-
+        mCommentList = new ArrayList<>();
         // 처음 액티비티 진입시 현재 재생 곡 데이터 바인딩
         // TODO : 서비스에서 로딩하지 않고 인텐트로 바로 전달 받으면 바로 UI 업데이트가 가능
         updateUINextSong();
@@ -246,31 +253,34 @@ public class PlayerActivity extends AppCompatActivity {
         if(getIntent().getExtras() != null){
             tempString = getIntent().getExtras().getString("songTitle");
         }
-        String urlEnc = URLEncoder.encode(tempString);
-
+        //String urlEnc = URLEncoder.encode(tempString);
         Retrofit retrofit =
                 new Retrofit.Builder()
                         .baseUrl(AWS_COMMENT_URL)
+                        .addConverterFactory(new NullOnEmptyConverterFactory())
                         .addConverterFactory(GsonConverterFactory.create()).build();
         apiService = retrofit.create(CommentApiService.class);
 
-        String reqString = urlEnc + "," + mId;
-        Call<Object> res = apiService.getCommentByTitleId(reqString);
+        Call<Object> res = apiService.getCommentByTitleId(tempString);
         res.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                Log.d("RegisterActivity", "통신 성공 발생 : " + response.body().toString());
-                if(!response.body().toString().equals("{}")){
 
+                if(response.body() != null){
+
+                    Log.d(TAG, "통신 성공 발생 : " + response.body().toString());
                     String json = response.body().toString();
 
                     Gson gson = new Gson();
-                    Example data = gson.fromJson(json, Example.class);
-                    Log.d("RegisterActivity", "파싱 성공 발생 : " + data.getItem().getId());
+
+                    Type listType = new TypeToken<ArrayList<Comment>>() {
+                    }.getType();
+                    mCommentList = gson.fromJson(json, listType);
+                    Log.d(TAG, "파싱 성공 발생 : " );
 
 
                 } else {
-
+                    Log.d(TAG, "통신 성공, body 비어있음");
                 }
 
 
@@ -371,14 +381,12 @@ public class PlayerActivity extends AppCompatActivity {
                 String result = message.getText().toString();
                 // 객체 담기
                 Comment comment = new Comment();
-                comment.setId(mId);
-                comment.setTitle(song.title);
-                comment.setArtist(song.artistName);
-                comment.setContent(result);
-                comment.setTime(time.getText().toString());
+                comment.setMemId(mId);
+                comment.setComSongName(song.title);
+                comment.setComArtist(song.artistName);
+                comment.setComContent(result);
+                comment.setComTime(time.getText().toString());
                 // 통신
-
-
                 final Call<Comment> res = apiService.postUser(comment);
 
                 res.enqueue(new Callback<Comment>() {
@@ -386,7 +394,6 @@ public class PlayerActivity extends AppCompatActivity {
                     public void onResponse(Call<Comment> call, Response<Comment> response) {
                         final  Object message = response.body();
                         Toast.makeText(getApplicationContext(), "서버에 값을 전달했습니다 : ", Toast.LENGTH_SHORT).show();
-
                     }
                     @Override
                     public void onFailure(Call<Comment> call, Throwable t) {
@@ -396,7 +403,7 @@ public class PlayerActivity extends AppCompatActivity {
                 });
 
                 sendBroadcast(new Intent(BroadcastActions.PLAY_LIST_ADD));
-                Toast.makeText(getApplicationContext(), "\"" +  message.getText().toString() + "\" 으로 재생 목록을 만들었습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "\"" +  message.getText().toString() + "\" 코멘트를 등록했습니다.", Toast.LENGTH_SHORT).show();
                 // 커스텀 다이얼로그를 종료한다.
                 dlg.dismiss();
             }
@@ -600,6 +607,13 @@ public class PlayerActivity extends AppCompatActivity {
 
             if (duration != null && this != null && position / 1000 <= maxDuration / 1000)
                 duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
+
+            // 코멘트 업데이트
+            if (mCommentList != null && mCommentList.size() > 0){
+                // 검사
+                
+
+            }
         }
         overflowcounter--;
         // 서비스가 준비됬는지를 꼼꼼히 확인하면

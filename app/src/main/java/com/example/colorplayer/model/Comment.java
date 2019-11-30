@@ -1,53 +1,74 @@
 package com.example.colorplayer.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Comment {
 
-    private String id;
-    private String title;
-    private String artist;
-    private String content;
-    private String time;
+    @SerializedName("com_num")
+    @Expose
+    private Integer comNum;
+    @SerializedName("mem_id")
+    @Expose
+    private String memId;
+    @SerializedName("com_song_name")
+    @Expose
+    private String comSongName;
+    @SerializedName("com_artist")
+    @Expose
+    private String comArtist;
+    @SerializedName("com_content")
+    @Expose
+    private String comContent;
+    @SerializedName("com_time")
+    @Expose
+    private String comTime;
 
-    public Comment() {
+    public Integer getComNum() {
+        return comNum;
     }
 
-    public String getId() {
-        return id;
+    public void setComNum(Integer comNum) {
+        this.comNum = comNum;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getMemId() {
+        return memId;
     }
 
-    public String getTitle() {
-        return title;
+    public void setMemId(String memId) {
+        this.memId = memId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getComSongName() {
+        return comSongName;
     }
 
-    public String getArtist() {
-        return artist;
+    public void setComSongName(String comSongName) {
+        this.comSongName = comSongName;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
+    public String getComArtist() {
+        return comArtist;
     }
 
-    public String getContent() {
-        return content;
+    public void setComArtist(String comArtist) {
+        this.comArtist = comArtist;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public String getComContent() {
+        return comContent;
     }
 
-    public String getTime() {
-        return time;
+    public void setComContent(String comContent) {
+        this.comContent = comContent;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public String getComTime() {
+        return comTime;
+    }
+
+    public void setComTime(String comTime) {
+        this.comTime = comTime;
     }
 }

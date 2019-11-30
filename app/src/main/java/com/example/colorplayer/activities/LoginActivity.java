@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("RegisterActivity", "통신 성공 발생 : " + response.body().toString());
                         // 어차피 여기서는 서버에 아이디가 있는지만 확인하면 되므로 response body 가
                         // null 인지만 빠르게 체크하는 것이 속도면에서 나음
-                        if(!response.body().toString().equals("{}")){
+                        if(response.body() != null){
                             isExistId = true;
 
                             String json = response.body().toString();
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                             // 임시방편으로 이렇게 처리
 
                             // 1. password= 찾기
-                            String temp = json.split("password=")[1];
+                            String temp = json.split("mem_pass=")[1];
 
                             // 2. temp 에서 } 가 나오는 길이까지 문자열 자르기
                             int lastIndex = temp.indexOf("}");

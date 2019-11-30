@@ -1,8 +1,12 @@
 package com.example.colorplayer.http;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Member {
+    @SerializedName("mem_num")
+    @Expose
+    private Integer memNum;
     @SerializedName("id")
     public String id;
     @SerializedName("password")
