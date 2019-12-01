@@ -1,4 +1,4 @@
-package com.example.colorplayer.http;
+package com.example.colorplayer.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

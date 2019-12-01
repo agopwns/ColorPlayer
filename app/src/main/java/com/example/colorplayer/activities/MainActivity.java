@@ -33,6 +33,9 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.client.AWSStartupHandler;
+import com.amazonaws.mobile.client.AWSStartupResult;
 import com.bumptech.glide.Glide;
 import com.example.colorplayer.AudioApplication;
 import com.example.colorplayer.AudioServiceInterface;
@@ -84,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
                 getApplicationContext(),//현재제어권자
                 OnLockService.class); // 이동할 컴포넌트
         startService(intent);
+
+        // aws 연결
+        AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
+            @Override
+            public void onComplete(AWSStartupResult awsStartupResult) {
+                Log.d("YourMainActivity", "AWSMobileClient is instantiated and you are connected to AWS!");
+            }
+        }).execute();
 
         mPreferences = PreferencesUtility.getInstance(getApplicationContext());
         playListDao = PlayListDB.getInstance(this).playListDao();

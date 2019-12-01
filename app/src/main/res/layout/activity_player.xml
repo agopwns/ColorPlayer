@@ -59,10 +59,12 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <LinearLayout
+        android:id="@+id/layout_comment"
         android:layout_width="wrap_content"
         android:layout_height="22dp"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/album_art">
@@ -76,7 +78,7 @@
             android:paddingRight="7dp"
             android:text="userId"
             android:textColor="@color/colorWhite"
-            android:textSize="16dp" />
+            android:textSize="16dp"/>
 
         <TextView
             android:id="@+id/user_comment"
@@ -87,9 +89,9 @@
             android:paddingLeft="7dp"
             android:paddingRight="7dp"
             android:text="This song is so chill!"
-
             android:textColor="@color/colorBlack"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            />
 
     </LinearLayout>
 

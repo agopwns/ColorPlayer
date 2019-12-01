@@ -11,14 +11,18 @@ import android.content.IntentFilter;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,7 @@ import com.example.colorplayer.utils.PreferencesUtility;
 import com.example.colorplayer.utils.RepeatActions;
 import com.example.colorplayer.utils.Time;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
@@ -50,7 +55,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -71,7 +78,8 @@ public class PlayerActivity extends AppCompatActivity {
             repeatButton, prevButton, playButton, nextButton, shuffleButton,
             favoriteButton, commentButton, playingListButton;
     ImageView albumArt;
-    TextView title, artist, duration, totalTime;
+    TextView title, artist, duration, totalTime,
+            userId, userComment;
     Song song;
     SeekBar seekBar;
     String mId;
@@ -79,12 +87,15 @@ public class PlayerActivity extends AppCompatActivity {
     private int overflowcounter = 0;
     private boolean isActivityPaused = false;
     private int playCount = 0;
-    int mDelay = 100;
+    int mDelay = 20;
     PreferencesUtility mPreferences;
     CommentApiService apiService;
     private static String TAG = "PlayerActivity";
     private List<Comment> mCommentList;
-
+    HashMap<String, String> mCommentMap;
+    private boolean isFadeIn;
+    private LinearLayout commentLayout;
+    private AlphaAnimation fadeInAnim, fadingAnim, fadeOutAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +109,21 @@ public class PlayerActivity extends AppCompatActivity {
         duration = findViewById(R.id.song_start_time);
         totalTime = findViewById(R.id.song_end_time);
         seekBar = findViewById(R.id.song_progress_normal);
+        userId = findViewById(R.id.user_id);
+        userComment = findViewById(R.id.user_comment);
+        commentLayout = findViewById(R.id.layout_comment);
+
+        // 애니메이션 설정
+        fadeInAnim = new AlphaAnimation(0, 1);
+        fadeInAnim.setDuration(1300);
+        fadeInAnim.setRepeatCount(1);
+        fadeInAnim.setRepeatMode(Animation.REVERSE);
+
+//        fadingAnim = new AlphaAnimation(1, 1);
+//        fadingAnim.setDuration(1500);
+//
+//        fadeOutAnim = new AlphaAnimation(1, 0);
+//        fadeOutAnim.setDuration(800);
 
         registerBroadcast();
 
@@ -247,12 +273,24 @@ public class PlayerActivity extends AppCompatActivity {
         // TODO : 서비스에서 로딩하지 않고 인텐트로 바로 전달 받으면 바로 UI 업데이트가 가능
         updateUINextSong();
 
+        getComment();
+
+    }
+
+    private void getComment() {
         // 1. 해당 곡 정보 토대로 코멘트 가져오기
         // 통신
         String tempString = "";
         if(getIntent().getExtras() != null){
             tempString = getIntent().getExtras().getString("songTitle");
         }
+        if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
+            song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            tempString = song.title;
+        }
+
+        // api gateway 를 통해 전송시 자동으로 인코딩 됨.
+        // 어느 서비스에서 되는지는 정확히 모르겠음.
         //String urlEnc = URLEncoder.encode(tempString);
         Retrofit retrofit =
                 new Retrofit.Builder()
@@ -260,7 +298,6 @@ public class PlayerActivity extends AppCompatActivity {
                         .addConverterFactory(new NullOnEmptyConverterFactory())
                         .addConverterFactory(GsonConverterFactory.create()).build();
         apiService = retrofit.create(CommentApiService.class);
-
         Call<Object> res = apiService.getCommentByTitleId(tempString);
         res.enqueue(new Callback<Object>() {
             @Override
@@ -278,12 +315,38 @@ public class PlayerActivity extends AppCompatActivity {
                     mCommentList = gson.fromJson(json, listType);
                     Log.d(TAG, "파싱 성공 발생 : " );
 
+                    // 해쉬맵으로 시간 : {유저 아이디, 코멘트} 형태로 변형
+                    mCommentMap = new HashMap<>();
+                    long beforeMin = 0;
+                    long beforeSec = 0;
+                    Random random = new Random();
+                    int ran = random.nextInt(2);
+                    for(int i = ran; i < mCommentList.size(); i++){
+                        Comment item = mCommentList.get(i);
 
+                        String min = item.getComTime().split(":")[0];
+                        String sec = item.getComTime().split(":")[1];
+                        long curMin = Long.parseLong(min);
+                        long curSec = Long.parseLong(sec);
+                        if(i != 0){
+                            if(curMin - beforeMin < 1 && curSec - beforeSec > 3){
+                                String temp = item.getMemId() + "," + item.getComContent();
+                                mCommentMap.put(item.getComTime(), temp);
+                                beforeMin = curMin;
+                                beforeSec = curSec;
+                            }
+                        } else {
+                            String temp = item.getMemId() + "," + item.getComContent();
+                            mCommentMap.put(item.getComTime(), temp);
+                            beforeMin = curMin;
+                            beforeSec = curSec;
+                        }
+                    }
+                    Log.d(TAG, "맵핑 성공 발생 : " );
+                    Toast.makeText(getApplicationContext(), "맵핑 성공 발생", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "통신 성공, body 비어있음");
                 }
-
-
             }
 
             @Override
@@ -292,16 +355,6 @@ public class PlayerActivity extends AppCompatActivity {
                 Log.d("RegisterActivity", "통신 실패 발생 : " + t.toString());
             }
         });
-
-        // 2. 리스트로 만들기
-
-        // 3. 어떻게 해당 시간의 근처에 맞게 뿌려줄 지 고민하고
-
-        // 4. 그 다음 로직 짜기
-
-        // 5. 핸들러로 바꿔주기
-
-
     }
 
     @Override
@@ -446,6 +499,7 @@ public class PlayerActivity extends AppCompatActivity {
     private void updateUINextSong() {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            Toast.makeText(getApplicationContext(), "updateUINextSong()", Toast.LENGTH_SHORT).show();
 
             if(playButton != null){
                 Log.d("PlayerActivity", "노래재생 updateUINextSong()");
@@ -492,6 +546,8 @@ public class PlayerActivity extends AppCompatActivity {
     private void updateUINextSongWhenStop() {
         if(AudioApplication.getInstance() != null){
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            Toast.makeText(getApplicationContext(), "updateUINextSongWhenStop()", Toast.LENGTH_SHORT).show();
+            getComment();
             if(playButton != null){
                 if(AudioApplication.getInstance().getServiceInterface().isPlaying()){
                     playButton.setImageResource(R.drawable.baseline_play_arrow_white_36);
@@ -538,6 +594,8 @@ public class PlayerActivity extends AppCompatActivity {
             Log.d("PlayerActivity", "updateUIEndToFirst()");
 
             song = AudioApplication.getInstance().getServiceInterface().getAudioItem();
+            Toast.makeText(getApplicationContext(), "updateUIEndToFirst()", Toast.LENGTH_SHORT).show();
+            getComment();
 
             // 좋아요 버튼
             if(favoriteButton != null && song != null){
@@ -582,10 +640,6 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -609,9 +663,21 @@ public class PlayerActivity extends AppCompatActivity {
                 duration.setText(Time.makeShortTimeString(getApplication(), position / 1000));
 
             // 코멘트 업데이트
-            if (mCommentList != null && mCommentList.size() > 0){
+            if (mCommentMap != null && mCommentMap.size() > 0){
                 // 검사
-                
+                String temp = mCommentMap.get(duration.getText());
+                if(temp != null && !temp.equals("") && !isFadeIn){
+                    isFadeIn = true;
+                    userId.setText(temp.split(",")[0]);
+                    userComment.setText(temp.split(",")[1]);
+                    commentLayout.setVisibility(View.VISIBLE);
+                    commentLayout.startAnimation(fadeInAnim);
+//                    commentLayout.startAnimation(fadingAnim);
+//                    commentLayout.startAnimation(fadeOutAnim);
+                    commentLayout.setVisibility(View.INVISIBLE);
+
+                    isFadeIn = false;
+                }
 
             }
         }
@@ -642,6 +708,9 @@ public class PlayerActivity extends AppCompatActivity {
                 // 시작 초, duration, 시크바 초기화
                 updateUIEndToFirst();
                 AudioApplication.getInstance().getServiceInterface().tempPause();
+            } else if(intent.getAction().equals(BroadcastActions.PREPARED)) {
+                // 시작 초, duration, 시크바 초기화
+                getComment();
             }
 
         }
@@ -657,9 +726,13 @@ public class PlayerActivity extends AppCompatActivity {
         IntentFilter filterStop = new IntentFilter();
         filterStop.addAction(BroadcastActions.STOPPED);
 
+        IntentFilter filterPrepared = new IntentFilter();
+        filterStop.addAction(BroadcastActions.PREPARED);
+
         registerReceiver(mBroadcastReceiver, filterPlayState);
         registerReceiver(mBroadcastReceiver, filterNext);
         registerReceiver(mBroadcastReceiver, filterStop);
+        registerReceiver(mBroadcastReceiver, filterPrepared);
     }
 
     public void unregisterBroadcast(){

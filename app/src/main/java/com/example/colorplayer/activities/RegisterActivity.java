@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.colorplayer.R;
-import com.example.colorplayer.http.Member;
+import com.example.colorplayer.model.Member;
 import com.example.colorplayer.http.NullOnEmptyConverterFactory;
 import com.example.colorplayer.http.OpenApiService;
 import com.google.android.material.textfield.TextInputEditText;

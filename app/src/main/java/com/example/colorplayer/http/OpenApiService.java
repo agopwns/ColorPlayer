@@ -1,9 +1,6 @@
 package com.example.colorplayer.http;
 
-import com.google.gson.JsonArray;
-
-import java.util.HashMap;
-import java.util.List;
+import com.example.colorplayer.model.Member;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

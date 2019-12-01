@@ -37,6 +37,11 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
 
+    // aws
+    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.7.+@aar') { transitive = true }
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.7.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.7.+'
+
     annotationProcessor 'androidx.annotation:annotation:1.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     testImplementation 'junit:junit:4.12'
