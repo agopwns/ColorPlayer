@@ -14,13 +14,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:text="Event"
                 android:textColor="@color/colorWhite"
                 android:textSize="22dp"
@@ -40,13 +38,17 @@
         </LinearLayout>
 
 
+        <ViewFlipper
+            android:id="@+id/image_slide"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <!--<androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_event_list"
-            android:layout_width="410dp"
-            android:layout_height="100dp"
+            android:layout_width="368dp"
+            android:layout_height="120dp"
             android:background="@color/colorOpacity0"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal"/>-->
 
         <TextView
             android:layout_width="match_parent"
@@ -60,7 +62,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:background="@color/colorOpacity0">
 
             <LinearLayout
@@ -72,8 +74,8 @@
 
                 <ImageView
                     android:id="@+id/best_song_albumArt"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_marginLeft="10dp"
                     android:src="@drawable/baseline_whatshot_black_18"
                     android:layout_gravity="center"/>
@@ -107,7 +109,6 @@
                         android:text="Imagine Dragons"
                         android:textSize="16dp"/>
 
-
                 </LinearLayout>
 
 
@@ -120,7 +121,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
             android:text="Best 10"
             android:textColor="@color/colorWhite"
             android:textSize="22dp"
@@ -129,7 +129,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_best_ten_list"
             android:layout_width="410dp"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:background="@color/colorOpacity0"
             android:orientation="horizontal"/>
 
@@ -146,7 +146,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_best_favorite_list"
             android:layout_width="410dp"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:background="@color/colorOpacity0"
             android:orientation="horizontal"/>
 

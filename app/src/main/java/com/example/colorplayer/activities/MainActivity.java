@@ -44,6 +44,7 @@ import com.example.colorplayer.db.PlayListDB;
 import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.fragment.FolderListFragment;
 import com.example.colorplayer.fragment.PlayListFragment;
+import com.example.colorplayer.fragment.RecommendListFragment;
 import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
@@ -219,6 +220,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupViewPager(ViewPager viewPager, int position) {
+
+        adapter.addFragment(new RecommendListFragment(), "추천");
         adapter.addFragment(new SongListFragment(), "노래");
         adapter.addFragment(new AlbumListFragment(), "앨범");
         adapter.addFragment(new ArtistListFragment(), "아티스트");

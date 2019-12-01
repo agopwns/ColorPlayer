@@ -30,6 +30,12 @@ public interface SongInfoDao {
     @Query("SELECT * FROM songInfos WHERE id LIKE :songId") // 수정, 삭제시 필요
     SongInfo getSongInfosById(long songId);
 
+    @Query("SELECT * FROM songInfos ORDER BY play_count DESC")
+    SongInfo getMaxCountSong();
+
+    @Query("SELECT * FROM songInfos ORDER BY play_count DESC LIMIT 10")
+    List<SongInfo> getSongListCountTopTen();
+
     @Query("DELETE FROM songInfos WHERE id LIKE :songId")
     void deleteSongInfosById(long songId);
 }

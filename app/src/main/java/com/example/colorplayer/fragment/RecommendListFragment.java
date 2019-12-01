@@ -1,9 +1,12 @@
 package com.example.colorplayer.fragment;
 
 import android.app.Dialog;
-import android.content.Intent;
+import android.content.ContentUris;
+import android.content.Context;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -13,7 +16,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -21,36 +27,32 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.example.colorplayer.R;
-import com.example.colorplayer.activities.LoginActivity;
+import com.example.colorplayer.adapter.BestSongListAdapter;
 import com.example.colorplayer.adapter.EventAdapter;
 import com.example.colorplayer.adapter.SongAdapter;
+import com.example.colorplayer.dataloader.AlbumLoader;
 import com.example.colorplayer.dataloader.SongLoader;
+import com.example.colorplayer.db.SongInfoDB;
+import com.example.colorplayer.db.SongInfoDao;
 import com.example.colorplayer.http.EventApiService;
-import com.example.colorplayer.http.Example;
 import com.example.colorplayer.http.NullOnEmptyConverterFactory;
-import com.example.colorplayer.http.OpenApiService;
-import com.example.colorplayer.model.Comment;
+import com.example.colorplayer.model.Album;
 import com.example.colorplayer.model.Event;
-import com.example.colorplayer.model.Member;
-import com.example.colorplayer.model.PlayList;
+
 import com.example.colorplayer.model.Song;
-import com.example.colorplayer.utils.BroadcastActions;
+import com.example.colorplayer.model.SongInfo;
 import com.example.colorplayer.utils.PreferencesUtility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URLDecoder;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import java.lang.reflect.Type;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,12 +68,22 @@ public class RecommendListFragment extends Fragment{
     RecyclerView bestRecyclerView;
     RecyclerView favoriteRecyclerView;
     ImageButton addEventButton;
+    ImageView bestSongAlbumArt;
+    TextView bestSongYear, bestSongTitle, bestSongArtist;
+
     private EventAdapter adapter;
     PreferencesUtility mPreferences;
     private String mId;
     private ArrayList<Event> mList = new ArrayList<>();
     private static String TAG = "RecommendListFragment";
     EventApiService apiService;
+    Handler handler;
+    private int adapterPosition;
+    ViewFlipper viewFlipper;
+    SongInfoDao dao;
+    BestSongListAdapter bestSongAdapter;
+    List<Song> mSongList;
+
 
     public RecommendListFragment() {
     }
@@ -82,30 +94,35 @@ public class RecommendListFragment extends Fragment{
 
         try {
 
+            // 통신
+            getEventInfoFromAws();
+
+            bestSongAlbumArt = view.findViewById(R.id.best_song_albumArt);
+            bestSongYear = view.findViewById(R.id.best_song_year);
+            bestSongArtist = view.findViewById(R.id.best_song_artist);
+            bestSongTitle = view.findViewById(R.id.best_song_title);
+
             mPreferences = PreferencesUtility.getInstance(getActivity());
             mId = mPreferences.getString(PreferencesUtility.LOGIN_ID);
 
-            // xml 에서 리사이클러뷰 가로 설정 미리 함
-            eventRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_event_list);
-            eventRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity());
+            layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+            LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity());
+            layoutManager3.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+            viewFlipper = (ViewFlipper) view.findViewById(R.id.image_slide);
 
             bestRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_best_ten_list);
-            bestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            bestRecyclerView.setLayoutManager(layoutManager2);
 
             favoriteRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_best_favorite_list);
-            favoriteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-            // 통신
-            Retrofit retrofit =
-                    new Retrofit.Builder()
-                            .baseUrl(AWS_EVENT_URL) // TODO : AWS_EVENT_URL 로 변경
-                            .addConverterFactory(new NullOnEmptyConverterFactory())
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-            apiService = retrofit.create(EventApiService.class);
+            favoriteRecyclerView.setLayoutManager(layoutManager3);
 
             // 이벤트 관리자로 로그인 할 때 visible. 기본은 invisible 상태
             addEventButton = (ImageButton) view.findViewById(R.id.btn_add_event);
             if(mId.equals("EventAdmin")){
+                Toast.makeText(getActivity(), "EventAdmin 확인 visible", Toast.LENGTH_SHORT ).show();
                 addEventButton.setVisibility(View.VISIBLE);
                 addEventButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -114,45 +131,121 @@ public class RecommendListFragment extends Fragment{
                     }
                 });
             } else {
+                Toast.makeText(getActivity(), "EventAdmin 미확인 visible", Toast.LENGTH_SHORT ).show();
                 addEventButton.setVisibility(View.INVISIBLE);
             }
 
-            apiService = retrofit.create(EventApiService.class);
-            Call<Object> res = apiService.getEvents();
+            // BestSong, TOP10 정보 ROOM DB 에서 가져오기
+            dao = SongInfoDB.getInstance(getContext()).songInfoDao();
+            SongInfo song = dao.getMaxCountSong();
+            List<SongInfo> idList = dao.getSongListCountTopTen();
 
-            // aws 서버에 등록된 이벤트 정보 가져오기
-            try {
-                res.enqueue(new Callback<Object>() {
-                    @Override
-                    public void onResponse(Call<Object> call, Response<Object> response) {
+            // BestSong 바인딩
+            Song bestSong = SongLoader.getSongForID(getContext(), song.getId());
+            Album album = AlbumLoader.getAlbum(getContext(), bestSong.albumId);
 
-                        String json = response.body().toString();
-                        Gson gson = new Gson();
-                        Type listType = new TypeToken<ArrayList<Event>>() {
-                        }.getType();
-                        mList = gson.fromJson(json, listType);
-                        Log.d(TAG, "파싱 성공 발생. 이벤트 리스트 사이즈" + mList.size());
-                        Toast.makeText(getActivity(), "통신, 파싱 성공 발생", Toast.LENGTH_SHORT ).show();
-                    }
+            // 앨범 이미지 로드
+            Uri uri = ContentUris
+                    .withAppendedId(
+                            Uri.parse("content://media/external/audio/albumart")
+                            , bestSong.albumId);
+            Glide
+                    .with(getContext())
+                    .load(uri)
+                    .error(R.drawable.test)
+                    .into(bestSongAlbumArt);
 
-                    @Override
-                    public void onFailure(Call<Object> call, Throwable t) {
-                        Toast.makeText(getActivity(), "통신 실패 발생", Toast.LENGTH_SHORT ).show();
-                        Log.d(TAG, "통신 실패 발생 : " + t.toString());
-                    }
-                });
-            } catch (Exception e) {
-                Log.d(TAG, "통신 에러 발생 : " + e);
+            bestSongArtist.setText(bestSong.artistName);
+            bestSongTitle.setText(bestSong.title);
+            bestSongYear.setText("" + album.year);
+
+
+            mSongList = new ArrayList<>();
+            for(int i = 0; i < idList.size(); i++){
+                mSongList.add(SongLoader.getSongForID(getContext(), idList.get(i).getId()));
             }
-
-            // TODO : 어뎁터 준비
-            adapter = new EventAdapter(getActivity(), mList);
-            eventRecyclerView.setAdapter(adapter);
+            // TOP 10 바인딩
+            bestSongAdapter = new BestSongListAdapter(
+                    (AppCompatActivity)getContext(),
+                            mSongList,
+                    false,
+                        false);
+            bestRecyclerView.setAdapter(bestSongAdapter);
 
         } catch (Exception e){
-            Log.d("SongListFragment", "onCreateView 에러 발생 : " + e);
+            Log.d(TAG, "onCreateView 에러 발생 : " + e);
         }
         return view;
+    }
+
+    private void getEventInfoFromAws() {
+        Retrofit retrofit =
+                new Retrofit.Builder()
+                        .baseUrl(AWS_EVENT_URL) // TODO : AWS_EVENT_URL 로 변경
+                        .addConverterFactory(new NullOnEmptyConverterFactory())
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+        apiService = retrofit.create(EventApiService.class);
+        Call<Object> res = apiService.getEvents();
+
+        // aws 서버에 등록된 이벤트 정보 가져오기
+        try {
+            res.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(Call<Object> call, Response<Object> response) {
+
+                    String json = response.body().toString();
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<ArrayList<Event>>() {}.getType();
+                    mList = gson.fromJson(json, listType);
+                    Log.d(TAG, "파싱 성공 발생. 이벤트 리스트 사이즈" + mList.size());
+                    Toast.makeText(getActivity(), "통신, 파싱 성공 발생", Toast.LENGTH_SHORT).show();
+
+                    // 뷰 플리퍼로 변경
+                    // 앨범 이미지 로드
+                    for(int i = 0; i < mList.size(); i++){
+                        fllipperImages(i);
+                    }
+                }
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    Toast.makeText(getActivity(), "통신 실패 발생", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "통신 실패 발생 : " + t.toString());
+                }
+            });
+        } catch (Exception e) {
+            Log.d(TAG, "통신 에러 발생 : " + e);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // TODO : 어뎁터 준비
+        Log.d(TAG, "onResume 진입 발생 : ");
+
+    }
+
+    public void fllipperImages(int position) {
+        ImageView imageView = new ImageView(getActivity());
+
+        String awsUrl =
+                "https://colorplayer-deployments-mobilehub-937790274.s3.ap-northeast-2.amazonaws.com/";
+        Uri uri = Uri.parse(awsUrl + mList.get(position).EventId + ".jpg") ;
+        Glide
+                .with(getActivity())
+                .load(uri)
+                .centerCrop()
+                .placeholder(R.drawable.test)
+                .error(R.drawable.test)
+                .into(imageView);
+
+        viewFlipper.addView(imageView);      // 이미지 추가
+        viewFlipper.setFlipInterval(4000);       // 자동 이미지 슬라이드 딜레이시간(1000 당 1초)
+        viewFlipper.startFlipping();
+
+        // animation
+        viewFlipper.setInAnimation(getActivity(),android.R.anim.slide_in_left);
+        viewFlipper.setOutAnimation(getActivity(),android.R.anim.slide_out_right);
     }
 
     // 호출할 다이얼로그 함수를 정의한다.
@@ -175,7 +268,7 @@ public class RecommendListFragment extends Fragment{
         display.getSize(size);
         Window window = dlg.getWindow();
         int x = (int)(size.x * 0.9f);
-        int y = (int)(size.y * 0.27f);
+        int y = (int)(size.y * 0.4f);
         window.setLayout(x, y);
 
         // 커스텀 다이얼로그의 각 위젯들을 정의한다.
@@ -217,7 +310,6 @@ public class RecommendListFragment extends Fragment{
             }
         });
     }
-
 
 //    private class loadSongs extends AsyncTask<String, Void, String> {
 //

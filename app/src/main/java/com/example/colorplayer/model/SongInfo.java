@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey;
 public class SongInfo {
 
     @PrimaryKey()
+    @ColumnInfo(name = "id")
     private long id;
     @ColumnInfo(name = "title")
     private String title;

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,10 +50,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.AlbumHolder>
             // 앨범 이미지 로드
             String awsUrl =
                     "https://colorplayer-deployments-mobilehub-937790274.s3.ap-northeast-2.amazonaws.com/";
-            Uri uri = Uri.parse(awsUrl + event.getEventId()) ;
+            Uri uri = Uri.parse(awsUrl + event.getEventId() + ".jpg") ;
             Glide
                     .with(holder.itemView.getContext())
                     .load(uri)
+                    .centerInside()
                     .placeholder(R.drawable.test)
                     .error(R.drawable.test)
                     .into(holder.imageViewEvent);
@@ -80,7 +82,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.AlbumHolder>
 
         @Override
         public void onClick(View v) {
-            Intent moveIntent = new Intent(mContext.getApplicationContext(), PlayingListActivity.class);
             try {
                 if(arraylist.size() < 1) return;
                 String uri = arraylist.get(getAdapterPosition()).getEventUrl();
@@ -89,8 +90,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.AlbumHolder>
                 mContext.startActivity(liknIntent);
             } catch(Exception e){
                 Log.d("EventAdapter", "onClick 에러 발생 : " + e);
+                Toast.makeText(mContext, "EventAdapter 에러 : " + e, Toast.LENGTH_SHORT).show();
             }
-            mContext.startActivity(moveIntent);
         }
 
         private ArrayList<Long> getSongIdsList(List <Song> albumSongList) {
