@@ -2,154 +2,198 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Event"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="22dp"
+                    android:textStyle="bold"/>
+
+                <ImageButton
+                    android:id="@+id/btn_add_event"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/selector_sample"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_add_24px"
+                    android:visibility="invisible"/>
+
+            </LinearLayout>
+
+
+            <ViewFlipper
+                android:id="@+id/image_slide"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"/>
+
+            <!--<androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_event_list"
+                android:layout_width="368dp"
+                android:layout_height="120dp"
+                android:background="@color/colorOpacity0"
+                android:orientation="horizontal"/>-->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Event"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="Best Song"
                 android:textColor="@color/colorWhite"
                 android:textSize="22dp"
                 android:textStyle="bold"/>
 
-            <ImageButton
-                android:id="@+id/btn_add_event"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="left"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/selector_sample"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_add_24px"
-                android:visibility="invisible"/>
-
-        </LinearLayout>
-
-
-        <ViewFlipper
-            android:id="@+id/image_slide"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"/>
-
-        <!--<androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_event_list"
-            android:layout_width="368dp"
-            android:layout_height="120dp"
-            android:background="@color/colorOpacity0"
-            android:orientation="horizontal"/>-->
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="Best Song"
-            android:textColor="@color/colorWhite"
-            android:textSize="22dp"
-            android:textStyle="bold"/>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:background="@color/colorOpacity0">
-
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorOpacity0"
-                android:layout_gravity="left"
+                android:layout_height="140dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/colorOpacity10"
                 >
-
-                <ImageView
-                    android:id="@+id/best_song_albumArt"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginLeft="10dp"
-                    android:src="@drawable/baseline_whatshot_black_18"
-                    android:layout_gravity="center"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="left"
                     >
 
-                    <TextView
-                        android:id="@+id/best_song_year"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2019"
-                        android:textSize="14dp"/>
+                    <ImageView
+                        android:id="@+id/best_song_albumArt"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/baseline_whatshot_black_18"
+                        android:layout_gravity="center"/>
 
-                    <TextView
-                        android:id="@+id/best_song_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Believer"
-                        android:textSize="20dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center_vertical"
+                        >
 
-                    <TextView
-                        android:id="@+id/best_song_artist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Imagine Dragons"
-                        android:textSize="16dp"/>
+                        <TextView
+                            android:id="@+id/best_song_year"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2019"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="14dp"/>
+
+                        <TextView
+                            android:id="@+id/best_song_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Believer"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="20dp"/>
+
+                        <TextView
+                            android:id="@+id/best_song_artist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Imagine Dragons"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="16dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="당신은 이 곡을 "
+                                android:textColor="@color/colorWhite"
+                                android:textSize="14dp"/>
+                            <TextView
+                                android:id="@+id/best_song_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="100"
+                                android:textColor="@color/colorMildYellow"
+                                android:textSize="16dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="번 재생했군요!"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="14dp"/>
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Best 10"
+                android:textColor="@color/colorWhite"
+                android:textSize="22dp"
+                android:textStyle="bold"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_best_ten_list"
+                android:layout_width="370dp"
+                android:layout_height="140dp"
+                android:background="@color/colorOpacity0"
+                android:orientation="horizontal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="Favorite"
+                android:textColor="@color/colorWhite"
+                android:textSize="22dp"
+                android:textStyle="bold"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_best_favorite_list"
+                android:layout_width="370dp"
+                android:layout_height="140dp"
+                android:background="@color/colorOpacity0"
+                android:orientation="horizontal"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Best 10"
-            android:textColor="@color/colorWhite"
-            android:textSize="22dp"
-            android:textStyle="bold"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_best_ten_list"
-            android:layout_width="410dp"
-            android:layout_height="140dp"
-            android:background="@color/colorOpacity0"
-            android:orientation="horizontal"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="Favorite"
-            android:textColor="@color/colorWhite"
-            android:textSize="22dp"
-            android:textStyle="bold"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_best_favorite_list"
-            android:layout_width="410dp"
-            android:layout_height="140dp"
-            android:background="@color/colorOpacity0"
-            android:orientation="horizontal"/>
-
-    </LinearLayout>
 
 </FrameLayout>

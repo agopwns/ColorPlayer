@@ -69,7 +69,7 @@ public class RecommendListFragment extends Fragment{
     RecyclerView favoriteRecyclerView;
     ImageButton addEventButton;
     ImageView bestSongAlbumArt;
-    TextView bestSongYear, bestSongTitle, bestSongArtist;
+    TextView bestSongYear, bestSongTitle, bestSongArtist, bestSongCount;
 
     private EventAdapter adapter;
     PreferencesUtility mPreferences;
@@ -82,7 +82,7 @@ public class RecommendListFragment extends Fragment{
     ViewFlipper viewFlipper;
     SongInfoDao dao;
     BestSongListAdapter bestSongAdapter;
-    List<Song> mSongList;
+    List<Song> mSongList, mFavSongList;
 
 
     public RecommendListFragment() {
@@ -101,6 +101,7 @@ public class RecommendListFragment extends Fragment{
             bestSongYear = view.findViewById(R.id.best_song_year);
             bestSongArtist = view.findViewById(R.id.best_song_artist);
             bestSongTitle = view.findViewById(R.id.best_song_title);
+            bestSongCount = view.findViewById(R.id.best_song_count);
 
             mPreferences = PreferencesUtility.getInstance(getActivity());
             mId = mPreferences.getString(PreferencesUtility.LOGIN_ID);
@@ -158,7 +159,7 @@ public class RecommendListFragment extends Fragment{
             bestSongArtist.setText(bestSong.artistName);
             bestSongTitle.setText(bestSong.title);
             bestSongYear.setText("" + album.year);
-
+            bestSongCount.setText("" + song.getPlayCount());
 
             mSongList = new ArrayList<>();
             for(int i = 0; i < idList.size(); i++){
@@ -171,6 +172,21 @@ public class RecommendListFragment extends Fragment{
                     false,
                         false);
             bestRecyclerView.setAdapter(bestSongAdapter);
+
+            // Favorite 데이터 가져오기
+            List<SongInfo> fIdList = dao.getSongListFavorite();
+            mFavSongList = new ArrayList<>();
+            for(int i = 0; i < fIdList.size(); i++){
+                mFavSongList.add(SongLoader.getSongForID(getContext(), fIdList.get(i).getId()));
+            }
+            // Favorite 바인딩
+            bestSongAdapter = new BestSongListAdapter(
+                    (AppCompatActivity)getContext(),
+                    mFavSongList,
+                    false,
+                    false);
+            favoriteRecyclerView.setAdapter(bestSongAdapter);
+
 
         } catch (Exception e){
             Log.d(TAG, "onCreateView 에러 발생 : " + e);
