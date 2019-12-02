@@ -45,6 +45,7 @@ import com.example.colorplayer.db.PlayListDao;
 import com.example.colorplayer.fragment.FolderListFragment;
 import com.example.colorplayer.fragment.PlayListFragment;
 import com.example.colorplayer.fragment.RecommendListFragment;
+import com.example.colorplayer.fragment.YoutubeFragment;
 import com.example.colorplayer.model.PlayList;
 import com.example.colorplayer.utils.BroadcastActions;
 import com.example.colorplayer.R;
@@ -212,16 +213,12 @@ public class MainActivity extends AppCompatActivity {
         AudioApplication.getInstance().getServiceInterface().saveCurSongInfo();
     }
 
-    private View createTabView(String tabName) {
-        View tabView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.custom_tab, null);
-        TextView txt_name = (TextView) tabView.findViewById(R.id.txt_name);
-        txt_name.setText(tabName);
-        return tabView;
-    }
+
 
     public void setupViewPager(ViewPager viewPager, int position) {
 
         adapter.addFragment(new RecommendListFragment(), "추천");
+        adapter.addFragment(new YoutubeFragment(), "YouTube");
         adapter.addFragment(new SongListFragment(), "노래");
         adapter.addFragment(new AlbumListFragment(), "앨범");
         adapter.addFragment(new ArtistListFragment(), "아티스트");
