@@ -4,6 +4,160 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".YoutubeSearchResultActivity">
+    tools:context=".activities.YoutubeSearchResultActivity">
+
+    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+        android:id="@+id/youtube_player_view"
+        android:layout_width="320dp"
+        android:layout_height="200dp"
+        app:autoPlay="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showFullScreenButton="false"
+        app:videoId="S0Q4gqBUs7c" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp">
+
+        <ImageButton
+            android:id="@id/button_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/selector_sample"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_keyboard_backspace_white_24" />
+
+        <TextView
+            android:id="@+id/search_keyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="'검색어'"
+            android:textColor="@color/colorWhite"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="검색 결과"
+            android:textColor="@color/colorWhite"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@id/button_confirm"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="210dp"
+            android:background="@drawable/selector_sample"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_check_white_24" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+        tools:layout_editor_absoluteX="0dp">
+
+        <LinearLayout
+            android:id="@+id/layout_artist_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp">
+
+            <ImageView
+                android:id="@+id/iv_artist_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_whatshot_24px_white"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_artist_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kenshi Yonezu"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold"
+                    android:textSize="27dp"/>
+
+                <TextView
+                    android:id="@+id/tv_artist_genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="음악"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold"
+                    android:textSize="21dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>  <!-- layout_artist_info -->
+
+        <LinearLayout
+            android:id="@+id/layout_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="앨범"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:textSize="24dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_album_list"
+                android:layout_width="370dp"
+                android:layout_height="140dp"
+                android:background="@color/colorOpacity0"
+                android:orientation="horizontal"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_artist_playlist"
+                android:layout_width="370dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/colorOpacity0"
+                android:orientation="horizontal"/>
+
+        </LinearLayout>
+
+    </LinearLayout> <!-- layout_artist -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_search_result_list"
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorOpacity0"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_artist"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

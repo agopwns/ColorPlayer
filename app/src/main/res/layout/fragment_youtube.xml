@@ -59,6 +59,7 @@
             android:orientation="horizontal">
 
             <EditText
+                android:id="@+id/et_search_keyword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="여기에 검색어를 입력하세요."
@@ -67,7 +68,7 @@
                 android:textSize="22dp"/>
 
             <ImageButton
-                android:id="@id/button_back"
+                android:id="@+id/button_search"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginLeft="10dp"

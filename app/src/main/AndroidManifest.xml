@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".YoutubeSearchResultActivity"></activity>
+        <activity android:name=".activities.YoutubeSearchResultActivity"></activity>
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.LockScreenActivity" />
