@@ -17,9 +17,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.colorplayer.R;
-import com.example.colorplayer.model.YoutubeVideoItem;
+import com.example.colorplayer.youtube.YoutubeVideoItem;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.squareup.picasso.Picasso;
 
@@ -57,13 +58,16 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         final YoutubeVideoItem item = mItems.get(position);
 
         holder.mTitleTV.setText(item.title);
+        //holder.mArtist.setText(item.title);
+        holder.mViewCount.setText(item.viewCount);
+        holder.mDuration.setText(item.duration);
+
+
         holder.youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-
-                youTubePlayer.loadVideo(item.videoId, 0);
-                youTubePlayer.pause();
-                //youTubePlayer.cueVideo(item.videoId, 0);
+                //YouTubePlayerUtils.loadOrCueVideo();
+                youTubePlayer.cueVideo(item.videoId, 0);
             }
         });
     }
@@ -89,7 +93,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTitleTV, mLikesCountTV;
+        private TextView mTitleTV, mViewCount, mArtist, mDuration;
         private EditText mCommentET;
         private ImageView mImageView;
         private Button mLikeButton, mCommentButton;
@@ -99,17 +103,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
 
+            mArtist = itemView.findViewById(R.id.artist_name);
+            mDuration = itemView.findViewById(R.id.tv_duration);
+            mViewCount = itemView.findViewById(R.id.tv_play_count);
             mTitleTV = itemView.findViewById(R.id.tv_song_title);
             youTubePlayerView = itemView.findViewById(R.id.youtube_player_view);
-
-            // TODO : 클릭시 재생으로 바꾸기
-            youTubePlayerView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-
-                }
-            });
+            mLifeCycle.addObserver(youTubePlayerView);
         }
     }
 }

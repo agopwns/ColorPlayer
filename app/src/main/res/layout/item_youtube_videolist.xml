@@ -5,32 +5,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/colorOpacity0"
-    android:layout_marginLeft="4dp"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp">
 
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
         android:id="@+id/youtube_player_view"
-        android:layout_width="320dp"
-        android:layout_height="200dp"
-        app:videoId="S0Q4gqBUs7c"
-        app:autoPlay="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:showFullScreenButton="false" />
 
     <LinearLayout
-        android:layout_width="320dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp">
 
         <TextView
             android:id="@+id/tv_song_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Lemon"
             android:ellipsize="end"
             android:textColor="@color/colorWhite"
             android:maxLines="1"
             android:maxWidth="250dp"
-            android:textSize="18dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             />
 
@@ -39,19 +39,6 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:maxWidth="250dp">
-
-            <TextView
-                android:id="@+id/artist_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="Kenshi Yonezu"
-                android:ellipsize="end"
-                android:textColor="@color/colorWhite"
-                android:maxLines="2"
-                android:textSize="12dp"
-                android:textStyle="bold"
-                />
 
             <TextView
                 android:layout_width="wrap_content"
