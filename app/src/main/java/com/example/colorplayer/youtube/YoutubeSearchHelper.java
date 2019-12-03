@@ -139,8 +139,8 @@ public class YoutubeSearchHelper {
 
             mListener.onSearchComplete(youtubeVideoItems);
 
-//            GetLikesTask task = new GetLikesTask();
-//            task.execute(youtubeVideoItems);
+            GetLikesTask task = new GetLikesTask();
+            task.execute(youtubeVideoItems);
         }
     }
 
