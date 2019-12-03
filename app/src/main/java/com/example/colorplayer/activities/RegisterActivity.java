@@ -126,6 +126,29 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 if(aesPass.equals("")) return;
 
+                                String test = "";
+                                try {
+                                    test = AES_Decode(aesPass);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                } catch (NoSuchAlgorithmException e) {
+                                    e.printStackTrace();
+                                } catch (NoSuchPaddingException e) {
+                                    e.printStackTrace();
+                                } catch (InvalidKeyException e) {
+                                    e.printStackTrace();
+                                } catch (InvalidAlgorithmParameterException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalBlockSizeException e) {
+                                    e.printStackTrace();
+                                } catch (BadPaddingException e) {
+                                    e.printStackTrace();
+                                }
+
+                                System.out.println(test);
+                                //aesPass = aesPass.replace("==\n","");
+                                //aesPass = aesPass.replace("\\","");
+                                //aesPass = aesPass.trim();
                                 Member member = new Member(mId, aesPass);
                                 final Call<Member> res = apiService.postUser(member);
 

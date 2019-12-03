@@ -36,7 +36,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
-    implementation 'com.android.volley:volley:1.1.0'
 
     // Youtube Library by OpenSource
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
