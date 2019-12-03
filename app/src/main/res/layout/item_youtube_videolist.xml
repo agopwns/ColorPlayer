@@ -8,13 +8,68 @@
     android:layout_marginLeft="4dp"
     android:layout_marginTop="10dp">
 
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/youtube_player_view"
-        android:layout_width="320dp"
-        android:layout_height="200dp"
-        app:videoId="S0Q4gqBUs7c"
-        app:autoPlay="true"
-        app:showFullScreenButton="false" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing="-0.02"
+            android:lineSpacingExtra="5sp"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/imageViewItem"
+            android:layout_width="320dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="matrix"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/youtube_player_view"
+            android:layout_width="320dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            app:showFullScreenButton="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle"/>
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorOpacity0"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewItem"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewItem"
+            app:layout_constraintStart_toStartOf="@+id/imageViewItem"
+            app:layout_constraintTop_toTopOf="@+id/imageViewItem"
+            app:srcCompat="@drawable/baseline_play_arrow_white_36" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <LinearLayout
         android:layout_width="320dp"
