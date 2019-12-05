@@ -3,6 +3,7 @@ package com.example.colorplayer.fragment;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -241,7 +242,7 @@ public class RecommendListFragment extends Fragment{
 
     }
 
-    public void fllipperImages(int position) {
+    public void fllipperImages(final int position) {
         ImageView imageView = new ImageView(getActivity());
 
         String awsUrl =
@@ -258,6 +259,16 @@ public class RecommendListFragment extends Fragment{
         viewFlipper.addView(imageView);      // 이미지 추가
         viewFlipper.setFlipInterval(4000);       // 자동 이미지 슬라이드 딜레이시간(1000 당 1초)
         viewFlipper.startFlipping();
+
+        viewFlipper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int curPosition = viewFlipper.getDisplayedChild();
+                Intent i3 = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://" + mList.get(curPosition).EventUrl + "/"));
+                startActivity(i3);
+            }
+        });
 
         // animation
         viewFlipper.setInAnimation(getActivity(),android.R.anim.slide_in_left);
