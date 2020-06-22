@@ -108,6 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 String aesPass = "";
                                 try {
                                     aesPass = AES_Encode(mPass1);
+
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 } catch (NoSuchAlgorithmException e) {

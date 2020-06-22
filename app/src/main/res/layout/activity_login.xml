@@ -100,9 +100,7 @@
             android:theme="@style/TextLabel"
             android:textColorHint="@color/colorWhite"
             >
-
         </com.google.android.material.textfield.TextInputLayout>
-
 
     </LinearLayout>
 
