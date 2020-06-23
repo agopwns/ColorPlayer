@@ -1,13 +1,15 @@
 # ColorPlayer
 기본적인 음악 플레이어입니다.  
   
-음악 플레이어 오픈소스로 유명한 [Timber](https://github.com/naman14/Timber)를 많이 참고하였습니다.   
+음악 플레이어 오픈소스로 유명한 [Timber](https://github.com/naman14/Timber)를 많이 참고하여 GNU 라이센스를 따릅니다.  
   
 나만의 음악 어플을 만들어보고 싶었고  
   
 해당 작품을 통해 안드로이드의 Service와 Media Player를 많이 활용해보고 싶어서 개발하였습니다.   
    
 작품의 상세 작동 영상은 [여기]()에서 보실 수 있습니다.  
+
+## 스크린샷
 <div style="float:left;">
   <img src="https://github.com/agopwns/ColorPlayer/blob/master/images/1playList.jpg" alt="Your image title" width="440"/> 
   <img src="https://github.com/agopwns/ColorPlayer/blob/master/images/2player.jpg" alt="Your image title" width="440"/>
@@ -18,7 +20,7 @@
 </div>
 
 ## 기능
-  - 기본 음악 플레이어 기능
+  - 기본 음악 플레이어 기능(재생, 일시정지, 앞으로, 뒤로, 재생바, 랜덤 재생, 반복)
   - 위젯, 노티피케이션
   - 잠금 화면
   - 노래, 앨범, 가수, 폴더 리스트
@@ -42,12 +44,12 @@
   - Youtube API
 
 ## 라이센스
-The MIT License (MIT)  
+License
+(c) 2020 agopwns  
   
-Copyright (c) 2020 agopwns
-    
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:  
+This is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
   
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.  
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  
   
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+You should have received a copy of the GNU General Public License along with this app. If not, see https://www.gnu.org/licenses/.
+  
