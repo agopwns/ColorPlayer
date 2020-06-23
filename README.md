@@ -7,7 +7,7 @@
   
 해당 작품을 통해 안드로이드의 Service와 Media Player를 많이 활용해보고 싶어서 개발하였습니다.   
    
-작품의 상세 작동 영상은 [여기]()에서 보실 수 있습니다.  
+작품의 상세 작동 영상은 [여기](https://youtu.be/xRRacTuoMQE)에서 보실 수 있습니다.  
 
 ## 스크린샷
 <div style="float:left;">
