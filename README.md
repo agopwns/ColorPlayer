@@ -1,5 +1,9 @@
 # ColorPlayer
-기본적인 음악 플레이어입니다. 나만의 음악 어플을 만들어보고 싶었고 해당 작품을 통해 안드로이드의 Service와 Media Player를 많이 활용해보고 싶어서 개발하였습니다. 작품의 상세 작동 영상은 [여기]()에서 보실 수 있습니다.  
+기본적인 음악 플레이어입니다.   
+  
+나만의 음악 어플을 만들어보고 싶었고 해당 작품을 통해 안드로이드의 Service와 Media Player를 많이 활용해보고 싶어서 개발하였습니다.   
+  
+작품의 상세 작동 영상은 [여기]()에서 보실 수 있습니다.  
 <div style="float:left;">
   <img src="https://github.com/agopwns/ColorPlayer/blob/master/images/1playList.jpg" alt="Your image title" width="440"/> 
   <img src="https://github.com/agopwns/ColorPlayer/blob/master/images/2player.jpg" alt="Your image title" width="440"/>
@@ -33,4 +37,11 @@
   - Room DB
   - Youtube API
 
-
+## 라이센스
+The MIT License (MIT)  
+Copyright (c) <2020> <agopwns>  
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:  
+  
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.  
+  
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
