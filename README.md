@@ -1,5 +1,7 @@
 # ColorPlayer
-기본적인 음악 플레이어입니다.   
+기본적인 음악 플레이어입니다.  
+  
+음악 플레이어 어플 오픈소스로 유명한 [Timber](https://github.com/naman14/Timber)를 많이 참고하였습니다.   
   
 나만의 음악 어플을 만들어보고 싶었고 해당 작품을 통해 안드로이드의 Service와 Media Player를 많이 활용해보고 싶어서 개발하였습니다.   
   
