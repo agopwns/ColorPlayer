@@ -2,4 +2,4 @@
 기본적인 음악 플레이어입니다.
 
 ## 기능
-![1playList.jpg](./images/1playList.jpg = 250px)
+<img src="https://github.com/agopwns/ColorPlayer/blob/master/images/1playList.jpg" alt="Your image title" width="250"/>
