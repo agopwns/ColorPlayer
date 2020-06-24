@@ -1,7 +1,7 @@
 # ColorPlayer
 안드로이드 기반 음악 플레이어 어플입니다.  
   
-음악 플레이어 오픈소스로 유명한 [Timber](https://github.com/naman14/Timber)를 많이 참고하여 GNU 라이센스를 따릅니다.  
+음악 플레이어 오픈소스로 유명한 [Timber](https://github.com/naman14/Timber)를 많이 참고하여 <b>GNU 라이센스</b>를 따릅니다.  
   
 나만의 음악 어플을 만들어보고 싶었고  
   
